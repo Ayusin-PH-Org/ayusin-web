@@ -49,6 +49,12 @@ export const reportSchema = new mongoose.Schema(
 						ref: "User",
 					},
 				],
+				report_status: {
+					type: String,
+					enum: ["NEW", "TRIAGED", "IN_PROGRESS", "RESOLVED", "REJECTED"],
+					required: true,
+					default: "NEW",
+				},
 			}),
 			required: true,
 		},

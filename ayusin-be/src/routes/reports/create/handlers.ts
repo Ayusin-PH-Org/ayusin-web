@@ -24,7 +24,7 @@ export const createReportHandler: AppRouteHandler<CreateReportRoute> = async (
 			},
 		});
 
-		report.save();
+		await report.save();
 
 		return c.json(
 			{ status: "success", ...reportDocToZod(report) },

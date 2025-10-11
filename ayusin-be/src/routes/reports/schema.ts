@@ -21,6 +21,13 @@ export const ReportSchema = z.object({
 	media_links: z.array(z.string()),
 	upvotes: z.number(),
 	location: Location,
+	report_status: z.enum([
+		"NEW",
+		"TRIAGED",
+		"IN_PROGRESS",
+		"RESOLVED",
+		"REJECTED",
+	]),
 });
 
 export const reportDocToZod = (report: mongoose.HydratedDocument<Report>) =>
@@ -39,4 +46,5 @@ export const reportDocToZod = (report: mongoose.HydratedDocument<Report>) =>
 			x: report.location.coordinates[0],
 			y: report.location.coordinates[1],
 		},
+		report_status: report.metadata.report_status,
 	});
