@@ -3,6 +3,7 @@ import createApp from "./lib/create-app";
 import configureOpenAPI from "./lib/openapi-spec";
 import departments from "./routes/departments/index";
 import index from "./routes/index";
+import members from "./routes/members/index";
 import reports from "./routes/reports/index";
 import roles from "./routes/roles/index";
 
@@ -20,7 +21,7 @@ app.onError((err, c) => {
 	);
 });
 
-const routes = [index, reports, departments, roles];
+const routes = [index, reports, departments, roles, members];
 
 routes.forEach((route) => {
 	app.route("/", route);

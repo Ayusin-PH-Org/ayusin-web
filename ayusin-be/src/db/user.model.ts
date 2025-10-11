@@ -3,6 +3,8 @@ import * as mongoose from "mongoose";
 export const userSchema = new mongoose.Schema(
 	{
 		version: { type: Number, required: true },
+		// distinguishes local-government members vs. citizen users
+		type: { type: String, enum: ["lgu_member", "citizen"], required: true },
 		role: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Role",
@@ -21,6 +23,7 @@ export const userSchema = new mongoose.Schema(
 			type: [mongoose.Schema.Types.ObjectId],
 			ref: "User",
 			required: false,
+			default: [],
 		},
 		userID: { type: String, required: true }, // for clerk this is the clerk ID, otherwise it's the user ID from webauthn
 

@@ -5,7 +5,7 @@ import type { JwtVariables } from "hono/jwt";
 export interface AppBindings {
 	Variables: {
 		logger: PinoLogger;
-    jwt: JwtVariables;
+		jwt: JwtVariables;
 	};
 }
 

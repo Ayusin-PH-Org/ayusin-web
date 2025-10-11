@@ -16,12 +16,12 @@ export const departmentSchema = new mongoose.Schema(
 				ref: "User",
 			},
 		],
-        roles: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Role"
-            }
-        ]
+		roles: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Role",
+			},
+		],
 	},
 	{ timestamps: true },
 );

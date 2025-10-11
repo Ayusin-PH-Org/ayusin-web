@@ -19,8 +19,8 @@ export function createClerkRouter() {
 		strict: false,
 		defaultHook,
 	});
-    app.use("*", clerkAuth());
-    return app;
+	app.use("*", clerkAuth());
+	return app;
 }
 
 export default function createApp() {
