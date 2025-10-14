@@ -11,7 +11,7 @@ export async function generateMockReports(count = 50) {
 		// Random chance for dateClosed (30% chance it's closed)
 		const isClosed = Math.random() > 0.7;
 		const dateClosed = isClosed
-			? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+			? new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000)
 			: undefined;
 
 		const reportData = {
@@ -55,7 +55,7 @@ export async function generateMockReportsOneByOne(count = 50) {
 			const hasDescription = Math.random() > 0.2;
 			const isClosed = Math.random() > 0.7;
 			const dateClosed = isClosed
-				? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+				? new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000)
 				: undefined;
 
 			const report = new Report({
