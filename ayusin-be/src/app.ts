@@ -22,7 +22,7 @@ app.onError((err, c) => {
 	);
 });
 
-const routes = [index, reports, departments, roles, members, statistics];
+const routes = [index, reports, statistics, departments, roles, members];
 
 routes.forEach((route) => {
 	app.route("/", route);
