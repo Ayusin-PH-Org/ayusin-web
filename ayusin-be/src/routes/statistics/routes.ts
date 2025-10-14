@@ -55,6 +55,8 @@ const QueryParamsSchema = z
 	})
 	.partial();
 
+export type QueryParams = z.infer<typeof QueryParamsSchema>;
+
 export const getReportStatisticsRoute = createRoute({
 	description: "Get Report Statistics",
 	path: "/",

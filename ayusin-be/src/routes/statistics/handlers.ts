@@ -1,15 +1,41 @@
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { Report } from "@/db";
 import type { AppRouteHandler } from "@/lib/types";
-import { GetReportStatisticsRoute } from "./routes";
-import assert from "node:assert";
+import { GetReportStatisticsRoute, QueryParams } from "./routes";
+import { isNullOrUndefined } from "@/lib/utils";
+import { FilterQuery } from "mongoose";
+
+function createAggregatePipelineFromQueryParams(q: QueryParams) {
+	// Unfortunately, Mongoose sets FilterQuery<any>
+	const matches: FilterQuery<any> = {};
+
+	// TODO: No department matching yet for mock reports
+	if (!isNullOrUndefined(q.department))
+		matches["metadata.assignedDepartmentIDs"] = q.department;
+
+	if (!isNullOrUndefined(q.scope)) matches["metadata.scope"] = q.scope;
+
+	if (!isNullOrUndefined(q.category)) matches["metadata.category"] = q.category;
+
+	// TODO: Huh? this hasn't yet been implemented within Report.model.ts
+	// if (!isNullOrUndefined(q.severity)) matches["metadata.severity"] = q.severity;
+
+	// TODO: Implement this!
+	if (!isNullOrUndefined(q.location)) null;
+
+	return {
+		$match: matches,
+	};
+}
 
 export const getReportStatisticsHandler: AppRouteHandler<
 	GetReportStatisticsRoute
 > = async (c) => {
 	try {
+		const queryParams = c.req.valid("query");
 		// Explore more optimal aggregation techniques
 		const byReportStatus = await Report.aggregate([
+			createAggregatePipelineFromQueryParams(queryParams),
 			{
 				$group: {
 					_id: null,
@@ -46,11 +72,10 @@ export const getReportStatisticsHandler: AppRouteHandler<
 					},
 				},
 			},
-			// Remove _id property of aggregated document
-			{ $unset: "_id" },
 		]);
 
 		const byResolTime = await Report.aggregate([
+			createAggregatePipelineFromQueryParams(queryParams),
 			{
 				$match: {
 					"metadata.dateClosed": { $exists: true },
@@ -67,21 +92,16 @@ export const getReportStatisticsHandler: AppRouteHandler<
 					},
 				},
 			},
-			// Remove _id property of aggregated document
-			{ $unset: "_id" },
 		]);
 
-		assert(
-			byReportStatus.length == 1,
-			"Somehow, the aggregate for byReportStatus gave array not of length 1",
-		);
-		assert(
-			byResolTime.length == 1,
-			"Somehow, the aggregate for byReportStatus gave array not of length 1",
-		);
 		const result = {
-			...byReportStatus[0],
-			...byResolTime[0],
+			total: byReportStatus[0]?.total ?? 0,
+			new: byReportStatus[0]?.new ?? 0,
+			triaged: byReportStatus[0]?.triaged ?? 0,
+			in_progress: byReportStatus[0]?.in_progress ?? 0,
+			resolved: byReportStatus[0]?.resolved ?? 0,
+			rejected: byReportStatus[0]?.rejected ?? 0,
+			avg_resol_time: byResolTime[0]?.avg_resol_time ?? null,
 		};
 
 		return c.json(
