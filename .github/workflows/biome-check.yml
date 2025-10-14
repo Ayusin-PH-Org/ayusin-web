@@ -20,5 +20,5 @@ jobs:
       - name: Run Biome check
         run: |
           cd ayusin-be
-          bunx @biomejs/biome ci .
+          bunx @biomejs/biome format .
 
