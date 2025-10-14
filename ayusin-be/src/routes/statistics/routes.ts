@@ -3,9 +3,23 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { z } from "zod";
 
+const AggregateResultSchema = z.object({
+	total: z.int(),
+	new: z.int().describe("Total reports with status NEW"),
+	triaged: z.int().describe("Total reports with status TRIAGED"),
+	in_progress: z.int().describe("Total reports with status IN_PROGRESS"),
+	resolved: z.int().describe("Total reports with status RESOLVED"),
+	rejected: z.int().describe("Total reports with status REJECTED"),
+	avg_resol_time: z
+		.number()
+		// dateClosed should never be greater than createdAt
+		.positive()
+		.describe("Average resolution time of resolved reports"),
+});
+
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
-	payload: z.looseObject({}),
+	...AggregateResultSchema.shape,
 });
 
 const ErrorResponseSchema = z.object({
