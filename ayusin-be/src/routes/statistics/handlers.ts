@@ -2,11 +2,13 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { Report } from "@/db";
 import type { AppRouteHandler } from "@/lib/types";
 import { GetReportStatisticsRoute } from "./routes";
+import assert from "node:assert";
 
 export const getReportStatisticsHandler: AppRouteHandler<
 	GetReportStatisticsRoute
 > = async (c) => {
 	try {
+		// Explore more optimal aggregation techniques
 		const byReportStatus = await Report.aggregate([
 			{
 				$group: {
@@ -44,6 +46,7 @@ export const getReportStatisticsHandler: AppRouteHandler<
 					},
 				},
 			},
+			// Remove _id property of aggregated document
 			{ $unset: "_id" },
 		]);
 
@@ -64,13 +67,27 @@ export const getReportStatisticsHandler: AppRouteHandler<
 					},
 				},
 			},
+			// Remove _id property of aggregated document
 			{ $unset: "_id" },
 		]);
+
+		assert(
+			byReportStatus.length == 1,
+			"Somehow, the aggregate for byReportStatus gave array not of length 1",
+		);
+		assert(
+			byResolTime.length == 1,
+			"Somehow, the aggregate for byReportStatus gave array not of length 1",
+		);
+		const result = {
+			...byReportStatus[0],
+			...byResolTime[0],
+		};
 
 		return c.json(
 			{
 				status: "success",
-				payload: { ...byReportStatus[0], ...byResolTime[0] },
+				...result,
 			},
 			HttpStatusCodes.OK,
 		);
