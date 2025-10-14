@@ -27,7 +27,9 @@ export async function generateMockReports(count = 50) {
 				mediaLinks: randomChoices(mediaLinks, 0, 3),
 				scope: randomChoice([...scopes]),
 				category: randomChoice(categories),
-				report_status: randomChoice([...statuses]),
+				report_status: randomChoice([
+					...(isClosed ? closed_statuses : statuses),
+				]),
 				dateClosed,
 				assignedDepartmentIDs: [], // Empty for now, would need Department ObjectIds
 				assignedPersonnelIDs: [], // Empty for now, would need User ObjectIds
@@ -72,7 +74,9 @@ export async function generateMockReportsOneByOne(count = 50) {
 					scope: randomChoice([...scopes]),
 					category: randomChoice(categories),
 					dateClosed,
-					report_status: randomChoice([...statuses]),
+					report_status: randomChoice([
+						...(isClosed ? closed_statuses : statuses),
+					]),
 					assignedDepartmentIDs: [],
 					assignedPersonnelIDs: [],
 				},
@@ -182,13 +186,9 @@ const mediaLinks = [
 	"https://example.com/site_survey.pdf",
 ];
 
-const statuses = [
-	"NEW",
-	"TRIAGED",
-	"IN_PROGRESS",
-	"RESOLVED",
-	"REJECTED",
-] as const;
+const closed_statuses = ["RESOLVED", "REJECTED"] as const;
+
+const statuses = ["NEW", "TRIAGED", "IN_PROGRESS", ...closed_statuses] as const;
 
 // Helper function to generate random coordinates (Philippines bounds)
 function randomCoordinates() {
