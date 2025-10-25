@@ -6,6 +6,7 @@ import index from "./routes/index";
 import members from "./routes/members/index";
 import reports from "./routes/reports/index";
 import roles from "./routes/roles/index";
+import statistics from "./routes/statistics";
 
 const app = createApp();
 configureOpenAPI(app);
@@ -21,7 +22,7 @@ app.onError((err, c) => {
 	);
 });
 
-const routes = [index, reports, departments, roles, members];
+const routes = [index, reports, statistics, departments, roles, members];
 
 routes.forEach((route) => {
 	app.route("/", route);
