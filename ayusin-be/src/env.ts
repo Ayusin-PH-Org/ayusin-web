@@ -5,6 +5,12 @@ const EnvSchema = z.object({
 	LOG_LEVEL: z.string().optional().default("info").describe("Log Level"),
 	CLERK_JWT_PUBLIC_KEY: z.string().describe("Clerk JWT Public Key"),
 	MONGODB_URI: z.string().describe("Connection string to MongoDB"),
+	AZURE_STORAGE_CONNECTION_STRING: z
+		.string()
+		.describe("Azure Storage connection string"),
+	AZURE_STORAGE_CONTAINER_NAME: z
+		.string()
+		.describe("Azure Blob container name for media uploads"),
 	// DATABASE_CONNECTION_STRING: z
 	// 	.string()
 	// 	.describe("MongoDB Connection String"),

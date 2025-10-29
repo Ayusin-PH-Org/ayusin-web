@@ -6,6 +6,7 @@ import index from "./routes/index";
 import members from "./routes/members/index";
 import reports from "./routes/reports/index";
 import projects from "./routes/projects/index";
+import media from "./routes/media/index";
 import roles from "./routes/roles/index";
 
 const app = createApp();
@@ -22,7 +23,7 @@ app.onError((err, c) => {
 	);
 });
 
-const routes = [index, reports, projects, departments, roles, members];
+const routes = [index, reports, projects, media, departments, roles, members];
 
 routes.forEach((route) => {
 	app.route("/", route);
