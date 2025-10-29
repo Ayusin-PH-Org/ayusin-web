@@ -1,4 +1,5 @@
 import { z } from "zod";
+import * as HttpStatusCodes from "stoker/http-status-codes";
 
 const baseErrorResponse = z.object({
 	status: z.literal("error").readonly().optional(),
@@ -14,7 +15,7 @@ const testError: ErrorResponse = {
 };
 
 export class AyusinAPIException extends Error {
-	public statusCode: number = HTTPStatusCode.INTERNAL_SERVER_ERROR;
+	public statusCode: number = HttpStatusCodes.INTERNAL_SERVER_ERROR;
 
 	constructor(message: string) {
 		super(message);
