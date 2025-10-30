@@ -37,10 +37,63 @@ const MediaItem = z.object({
 });
 
 const CheckItem = z.object({
-	checkID: objectIdValidator,
-	description: z.string(),
-	status: z.boolean(),
-	note: z.string(),
+  checkID: objectIdValidator,
+  description: z.string(),
+  status: z.boolean(),
+  note: z.string(),
+});
+
+// API-only checklist templates matching src/db/checklist.json
+const CheckStatus = z.object({ status: z.boolean(), internalNotes: z.string().optional() });
+
+export const DamChecklistRequestSchema = z
+  .object({
+    visible: CheckStatus,
+    noCracks: CheckStatus,
+    spillwayNotBlocked: CheckStatus,
+    noOverflow: CheckStatus,
+    accessRoads: CheckStatus,
+    servesPurpose: CheckStatus,
+  })
+  .optional();
+
+export const WallChecklistRequestSchema = z
+  .object({
+    stable: CheckStatus,
+    heightAppropriate: CheckStatus,
+    noErosion: CheckStatus,
+    hasProperSlope: CheckStatus,
+    notClogged: CheckStatus,
+  })
+  .optional();
+
+export const SlopeProtectionChecklistRequestSchema = z
+  .object({
+    stonesIntact: CheckStatus,
+    noFreshErosion: CheckStatus,
+    channelWidthAdequate: CheckStatus,
+    flowDirectionNatural: CheckStatus,
+    protectsRoads: CheckStatus,
+    maintainance: CheckStatus,
+  })
+  .optional();
+
+export const CoastalProtectionChecklistRequestSchema = z
+  .object({
+    structureIntact: CheckStatus,
+    noCracks: CheckStatus,
+    noUndercutting: CheckStatus,
+    properMaterials: CheckStatus,
+    protectsCoastalHomes: CheckStatus,
+    areaNotEroded: CheckStatus,
+  })
+  .optional();
+
+export const ObservationChecklistRequestSchema = z.object({
+  dam: DamChecklistRequestSchema,
+  wall: WallChecklistRequestSchema,
+  slopeProtection: SlopeProtectionChecklistRequestSchema,
+  coastalProtection: CoastalProtectionChecklistRequestSchema,
 });
 
 const ObservationChecklist = z.object({
