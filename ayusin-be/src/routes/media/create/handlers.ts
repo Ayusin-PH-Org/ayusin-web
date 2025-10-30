@@ -1,15 +1,28 @@
-import * as HttpStatusCodes from "stoker/http-status-codes";
-import type { AppRouteHandler } from "@/lib/types";
-import env from "@/env";
 import { BlobServiceClient } from "@azure/storage-blob";
+import * as HttpStatusCodes from "stoker/http-status-codes";
 import { v4 as uuidv4 } from "uuid";
+import env from "@/env";
+import type { AppRouteHandler } from "@/lib/types";
+import { ErrorResponseSchema, UploadMediaResponseSchema } from "../schema";
 import type { UploadMediaRoute } from "./routes";
-import { UploadMediaResponseSchema, ErrorResponseSchema } from "../schema";
 
 export const uploadMediaHandler: AppRouteHandler<UploadMediaRoute> = async (
 	c,
 ) => {
-	const contentType = c.req.header("content-type") || "";
+	// Parse multipart form data and extract the file
+	const form = await (c.req as unknown as Request).formData();
+	const file = form.get("file");
+	if (!(file instanceof Blob)) {
+		return c.json(
+			ErrorResponseSchema.parse({
+				status: "error",
+				description: "Invalid media type",
+			}),
+			HttpStatusCodes.UNPROCESSABLE_ENTITY,
+		);
+	}
+
+	const contentType = file.type;
 	let type: "image" | "video";
 	if (contentType.startsWith("image/")) type = "image";
 	else if (contentType.startsWith("video/")) type = "video";
@@ -24,7 +37,7 @@ export const uploadMediaHandler: AppRouteHandler<UploadMediaRoute> = async (
 	}
 
 	try {
-		const arrayBuffer = await (c.req as unknown as Request).arrayBuffer();
+		const arrayBuffer = await file.arrayBuffer();
 		const fileSize = arrayBuffer.byteLength;
 
 		const ext = contentType.split("/")[1]?.split(";")[0] || "";
@@ -48,8 +61,18 @@ export const uploadMediaHandler: AppRouteHandler<UploadMediaRoute> = async (
 			UploadMediaResponseSchema.parse({ type, url, fileSize }),
 			HttpStatusCodes.OK,
 		);
-	} catch (error) {
+	} catch (error: any) {
 		c.var.logger.error(error);
+		// Map connection errors to a 502 Bad Gateway
+		if (error.code === "FailedToOpenSocket") {
+			return c.json(
+				ErrorResponseSchema.parse({
+					status: "error",
+					description: error.message,
+				}),
+				HttpStatusCodes.BAD_GATEWAY,
+			);
+		}
 		return c.json(
 			ErrorResponseSchema.parse({
 				status: "error",

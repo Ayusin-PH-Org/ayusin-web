@@ -1,8 +1,8 @@
-import { createClerkRouter } from "@/lib/create-app";
-import { deleteMediaHandler, deleteMediaRoute } from "./delete";
+import { createRouter } from "@/lib/create-app";
 import { uploadMediaHandler, uploadMediaRoute } from "./create";
+import { deleteMediaHandler, deleteMediaRoute } from "./delete";
 
-const router = createClerkRouter()
+const router = createRouter()
 	.basePath("/media")
 	.openapi(uploadMediaRoute, uploadMediaHandler)
 	.openapi(deleteMediaRoute, deleteMediaHandler);

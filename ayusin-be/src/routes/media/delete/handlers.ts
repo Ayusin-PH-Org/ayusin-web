@@ -1,13 +1,13 @@
-import * as HttpStatusCodes from "stoker/http-status-codes";
-import type { AppRouteHandler } from "@/lib/types";
-import env from "@/env";
 import { BlobServiceClient } from "@azure/storage-blob";
-import type { DeleteMediaRoute } from "./routes";
+import * as HttpStatusCodes from "stoker/http-status-codes";
+import env from "@/env";
+import type { AppRouteHandler } from "@/lib/types";
 import {
 	DeleteMediaRequestSchema,
 	DeleteMediaResponseSchema,
 	ErrorResponseSchema,
 } from "../schema";
+import type { DeleteMediaRoute } from "./routes";
 
 export const deleteMediaHandler: AppRouteHandler<DeleteMediaRoute> = async (
 	c,

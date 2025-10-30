@@ -7,16 +7,18 @@ Have to configure to change yung max payload size to be like 30mb?
 
 ```json
 POST /media
-Requires Bearer Token: YES
-Path Params: type="image | video"
+Requires Bearer Token: NO
+Path Params: N/A
 Query Params: N/A
-Request Body (not json, rather multiform/data)
+Request Headers: Content-Type: multipart/form-data
+Request Body (multipart/form-data, field "file")
 
 // Responses
 200 OK
 {
   "type": "image",
-  "url": "string"
+  "url": "string",
+  "fileSize": number
 }
 ```
 
