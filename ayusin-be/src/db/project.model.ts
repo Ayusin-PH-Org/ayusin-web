@@ -55,6 +55,7 @@ export const projectSchema = new mongoose.Schema(
 					ref: "User",
 					required: true,
 				},
+				url: { type: String, required: true },
 			},
 		],
 		isVerified: { type: Boolean, required: true },
