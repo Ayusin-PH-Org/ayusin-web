@@ -3,20 +3,41 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
 import { objectIdValidator } from "@/lib/utils";
-import { ProjectSchema, ObservationChecklistRequestSchema } from "../schema";
+import {
+	GeneralInformationRequestSchema,
+	MediaItemRequestSchema,
+	ObservationChecklistRequestSchema,
+	ProjectSchema,
+} from "../schema";
 
 const RequestSchema = ProjectSchema.omit({
+	id: true,
+	created_at: true,
+	updated_at: true,
 	internalNotes: true,
 	adminComments: true,
 })
 	.extend({
+		generalInformation: GeneralInformationRequestSchema,
+		media: z.array(MediaItemRequestSchema),
 		internalNotes: z
 			.object({ comment: z.string(), author: objectIdValidator })
 			.optional(),
 		adminComments: z
 			.object({ comment: z.string(), author: objectIdValidator })
 			.optional(),
-		observationChecklist: ObservationChecklistRequestSchema,
+		observationChecklist: ObservationChecklistRequestSchema.extend({
+			projectType: z
+				.enum([
+					"dam",
+					"wall",
+					"floodway",
+					"pumping_station",
+					"slope_protection",
+					"coastal_protection",
+				])
+				.describe("Project type for the checklist"),
+		}),
 	})
 	.refine(
 		(data) => {

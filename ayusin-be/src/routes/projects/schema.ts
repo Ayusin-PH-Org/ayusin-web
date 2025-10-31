@@ -1,7 +1,7 @@
 import type mongoose from "mongoose";
 import { z } from "zod";
 import type { Project } from "@/db";
-import { objectIdValidator } from "@/lib/utils";
+import { dateToYMDValidator, objectIdValidator } from "@/lib/utils";
 
 // General information about the project
 const GeneralInformation = z.object({
@@ -20,21 +20,32 @@ const GeneralInformation = z.object({
 	dpwhImplementingOffice: z.string(),
 	contractor: z.string(),
 	totalCost: z.number(),
-	fundingYear: z.iso.datetime(),
-	yearStart: z.iso.date(),
-	yearEnd: z.iso.date(),
+	fundingYear: z.date().transform((date) => date.getFullYear().toString()),
+	yearStart: dateToYMDValidator,
+	yearEnd: dateToYMDValidator,
 	implementationStatus: z.enum(["completed", "in_progress"]),
 	implementationStatusPercentage: z.number().int().min(0).max(100),
 	paymentStatus: z.enum(["paid", "partial"]),
 	paymentStatusPercentage: z.number().int().min(0).max(100),
 	monitors: z.array(z.string()),
+	dateOfVisit: dateToYMDValidator,
+});
+
+export const GeneralInformationRequestSchema = GeneralInformation.extend({
+	fundingYear: z.string(),
+	yearStart: z.iso.date(),
+	yearEnd: z.iso.date(),
 	dateOfVisit: z.iso.date(),
 });
 
 const MediaItem = z.object({
-	dateUploaded: z.iso.date(),
+	dateUploaded: z.date(),
 	uploader: objectIdValidator,
 	url: z.url(),
+});
+
+export const MediaItemRequestSchema = MediaItem.extend({
+	dateUploaded: z.iso.date(),
 });
 
 const CheckItem = z.object({
@@ -94,6 +105,14 @@ export const CoastalProtectionChecklistRequestSchema = z
 	.optional();
 
 export const ObservationChecklistRequestSchema = z.object({
+	projectType: z.enum([
+		"dam",
+		"wall",
+		"floodway",
+		"pumping_station",
+		"slope_protection",
+		"coastal_protection",
+	]),
 	dam: DamChecklistRequestSchema,
 	wall: WallChecklistRequestSchema,
 	slopeProtection: SlopeProtectionChecklistRequestSchema,

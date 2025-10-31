@@ -1,6 +1,6 @@
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import type { AppRouteHandler } from "@/lib/types";
-import { Project, Comment } from "../../../db";
+import { Comment, Project } from "../../../db";
 import { projectDocToZod } from "../schema";
 import type { CreateProjectRoute } from "./routes";
 
@@ -17,7 +17,9 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 				associatedID: body.generalInformation.projectID,
 				author: body.internalNotes.author,
 				comment: body.internalNotes.comment,
-				type: "internal_note",
+				type: "project",
+				isAdmin: false,
+				isInternal: true,
 			});
 			await note.save();
 			commentIDs.internalNotes = note._id;
@@ -27,7 +29,9 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 				associatedID: body.generalInformation.projectID,
 				author: body.adminComments.author,
 				comment: body.adminComments.comment,
-				type: "admin_comment",
+				type: "project",
+				isAdmin: true,
+				isInternal: false,
 			});
 			await note.save();
 			commentIDs.adminComments = note._id;
