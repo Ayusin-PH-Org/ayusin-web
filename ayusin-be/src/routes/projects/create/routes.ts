@@ -5,33 +5,35 @@ import { z } from "zod";
 import { ProjectSchema, ObservationChecklistRequestSchema } from "../schema";
 
 const RequestSchema = ProjectSchema.pick({
-  generalInformation: true,
-  isSatisfactory: true,
-  media: true,
-  isVerified: true,
-  communityComments: true,
-  internalNotes: true,
-  adminComments: true,
+	generalInformation: true,
+	isSatisfactory: true,
+	media: true,
+	isVerified: true,
+	communityComments: true,
+	internalNotes: true,
+	adminComments: true,
 })
-  .extend({
-    observationChecklist: ObservationChecklistRequestSchema,
-  })
-  .refine(
-    (data) => {
-      const type = data.generalInformation.type;
-      const key =
-        type === "slope_protection"
-          ? "slopeProtection"
-          : type === "coastal_protection"
-          ? "coastalProtection"
-          : type;
-      return !!data.observationChecklist[key as keyof typeof data.observationChecklist];
-    },
-    {
-      path: ["observationChecklist"],
-      message: "Checklist for selected project type is required",
-    },
-  );
+	.extend({
+		observationChecklist: ObservationChecklistRequestSchema,
+	})
+	.refine(
+		(data) => {
+			const type = data.generalInformation.type;
+			const key =
+				type === "slope_protection"
+					? "slopeProtection"
+					: type === "coastal_protection"
+						? "coastalProtection"
+						: type;
+			return !!data.observationChecklist[
+				key as keyof typeof data.observationChecklist
+			];
+		},
+		{
+			path: ["observationChecklist"],
+			message: "Checklist for selected project type is required",
+		},
+	);
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
