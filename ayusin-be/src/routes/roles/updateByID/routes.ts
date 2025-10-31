@@ -4,7 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["department"];
+const tags = ["role"];
 
 export const updateByID = createRoute({
 	path: "/{id}",
