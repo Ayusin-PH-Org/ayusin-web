@@ -2,18 +2,20 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
+import { objectIdValidator } from "@/lib/utils";
 import { ProjectSchema, ObservationChecklistRequestSchema } from "../schema";
 
-const RequestSchema = ProjectSchema.pick({
-	generalInformation: true,
-	isSatisfactory: true,
-	media: true,
-	isVerified: true,
-	communityComments: true,
+const RequestSchema = ProjectSchema.omit({
 	internalNotes: true,
 	adminComments: true,
 })
 	.extend({
+		internalNotes: z
+			.object({ comment: z.string(), author: objectIdValidator })
+			.optional(),
+		adminComments: z
+			.object({ comment: z.string(), author: objectIdValidator })
+			.optional(),
 		observationChecklist: ObservationChecklistRequestSchema,
 	})
 	.refine(
