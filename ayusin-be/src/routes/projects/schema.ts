@@ -52,7 +52,7 @@ const CheckItem = z.object({
 	checkID: objectIdValidator,
 	description: z.string(),
 	status: z.boolean(),
-	note: z.string(),
+	note: z.string().optional(),
 });
 
 // API-only checklist templates matching src/db/checklist.json
@@ -170,7 +170,7 @@ export const projectDocToZod = (project: mongoose.HydratedDocument<Project>) =>
 				checkID: c.checkID.toString(),
 				description: c.description,
 				status: c.status,
-				note: c.note,
+				note: c.note ?? undefined,
 			})),
 		},
 	});

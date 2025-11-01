@@ -90,7 +90,7 @@ export const projectSchema = new mongoose.Schema(
 							checkID: { type: mongoose.Schema.Types.ObjectId, required: true },
 							description: { type: String, required: true },
 							status: { type: Boolean, required: true },
-							note: { type: String, required: true },
+							note: { type: String, required: false },
 						},
 					],
 				},
