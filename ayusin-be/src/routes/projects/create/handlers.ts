@@ -64,12 +64,30 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 		}
 		const observationChecklist = { projectType, checks };
 
-		const { observationChecklist: _omit, ...restBody } = body;
+		// Map generalInformation.locationStr & location into GeoJSON Point
+		const gi = body.generalInformation;
+		const projectLocation = {
+			type: "Point",
+			coordinates: [gi.location.x, gi.location.y],
+		};
+		const projectGI = {
+			...gi,
+			location: projectLocation,
+		};
+		const {
+			internalNotes,
+			adminComments,
+			generalInformation,
+			observationChecklist: _omitChecklist,
+			...rest
+		} = body;
 		const project = new Project({
 			version: 1,
-			...restBody,
-			...commentIDs,
+			generalInformation: projectGI,
+			internalNotes: commentIDs.internalNotes,
+			adminComments: commentIDs.adminComments,
 			observationChecklist,
+			...rest,
 		});
 		await project.save();
 

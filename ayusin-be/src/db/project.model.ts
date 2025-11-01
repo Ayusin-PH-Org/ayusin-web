@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { pointSchema } from "./point.model";
 
 export const projectSchema = new mongoose.Schema(
 	{
@@ -8,7 +9,8 @@ export const projectSchema = new mongoose.Schema(
 					projectID: { type: String, required: true },
 					contractID: { type: String, required: true },
 					projectName: { type: String, required: true },
-					location: { type: String, required: true },
+					locationStr: { type: String, required: true },
+					location: { type: pointSchema, required: true, index: "2dsphere" },
 					type: {
 						type: String,
 						enum: [

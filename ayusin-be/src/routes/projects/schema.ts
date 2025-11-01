@@ -1,14 +1,19 @@
 import type mongoose from "mongoose";
 import { z } from "zod";
 import type { Project } from "@/db";
-import { dateToYMDValidator, objectIdValidator } from "@/lib/utils";
+import {
+	dateToYMDValidator,
+	locationValidator,
+	objectIdValidator,
+} from "@/lib/utils";
 
 // General information about the project
 const GeneralInformation = z.object({
 	projectID: z.string(),
 	contractID: z.string(),
 	projectName: z.string(),
-	location: z.string(),
+	locationStr: z.string(),
+	location: locationValidator,
 	type: z.enum([
 		"dam",
 		"wall",
@@ -32,6 +37,12 @@ const GeneralInformation = z.object({
 });
 
 export const GeneralInformationRequestSchema = GeneralInformation.extend({
+	locationStr: z.string().describe("Human-readable location address"),
+	location: z
+		.object({ x: z.number(), y: z.number() })
+		.describe(
+			"Location coordinates in terms of longitude (x) and latitude (y)",
+		),
 	fundingYear: z.string(),
 	yearStart: z.iso.date(),
 	yearEnd: z.iso.date(),
@@ -55,7 +66,6 @@ const CheckItem = z.object({
 	note: z.string().optional(),
 });
 
-// API-only checklist templates matching src/db/checklist.json
 const CheckStatus = z.object({
 	status: z.boolean(),
 	internalNotes: z.string().optional(),
@@ -148,12 +158,22 @@ export const ProjectSchema = z.object({
 	observationChecklist: ObservationChecklist,
 });
 
-export const projectDocToZod = (project: mongoose.HydratedDocument<Project>) =>
-	ProjectSchema.parse({
+export const projectDocToZod = (
+	project: mongoose.HydratedDocument<Project>,
+) => {
+	const projectObject = project.toObject();
+
+	return ProjectSchema.parse({
 		id: project._id.toString(),
 		created_at: project.createdAt,
 		updated_at: project.updatedAt,
-		generalInformation: project.generalInformation,
+		generalInformation: {
+			...projectObject.generalInformation,
+			location: {
+				x: project.generalInformation.location.coordinates[0],
+				y: project.generalInformation.location.coordinates[1],
+			},
+		},
 		isSatisfactory: project.isSatisfactory,
 		media: project.media.map((m) => ({
 			dateUploaded: m.dateUploaded,
@@ -174,3 +194,4 @@ export const projectDocToZod = (project: mongoose.HydratedDocument<Project>) =>
 			})),
 		},
 	});
+};

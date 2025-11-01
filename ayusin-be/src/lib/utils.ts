@@ -25,3 +25,8 @@ export const dateToYMDValidator = z.date().transform((date) =>
 		day: "2-digit",
 	}),
 );
+
+export const locationValidator = z.object({
+	x: z.number(),
+	y: z.number(),
+});
