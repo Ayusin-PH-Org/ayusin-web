@@ -8,6 +8,7 @@ import {
 	MediaItemRequestSchema,
 	ObservationChecklistRequestSchema,
 	ProjectSchema,
+	ProjectResponseSchema,
 } from "../schema";
 
 const RequestSchema = ProjectSchema.omit({
@@ -21,10 +22,10 @@ const RequestSchema = ProjectSchema.omit({
 		generalInformation: GeneralInformationRequestSchema,
 		media: z.array(MediaItemRequestSchema),
 		internalNotes: z
-			.object({ comment: z.string(), author: objectIdValidator })
+			.array(z.object({ comment: z.string(), author: objectIdValidator }))
 			.optional(),
 		adminComments: z
-			.object({ comment: z.string(), author: objectIdValidator })
+			.array(z.object({ comment: z.string(), author: objectIdValidator }))
 			.optional(),
 		observationChecklist: ObservationChecklistRequestSchema.extend({
 			projectType: z
@@ -60,7 +61,7 @@ const RequestSchema = ProjectSchema.omit({
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
-	...ProjectSchema.shape,
+	...ProjectResponseSchema.shape,
 });
 
 const ErrorResponseSchema = z.object({

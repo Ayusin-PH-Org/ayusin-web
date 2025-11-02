@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProjectSchema } from "../schema";
+import { ProjectSchema, ProjectResponseSchema } from "../schema";
 
 /**
  * Query parameters for radius-based project search.
@@ -16,7 +16,7 @@ export const getProjectsByLocationQuery = z.object({
  */
 export const getProjectsByLocationResponse = z.object({
 	status: z.literal("success"),
-	projects: z.array(ProjectSchema),
+	projects: z.array(ProjectResponseSchema),
 });
 
 /**

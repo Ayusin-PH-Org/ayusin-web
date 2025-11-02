@@ -62,16 +62,18 @@ export const projectSchema = new mongoose.Schema(
 		],
 		isVerified: { type: Boolean, required: true },
 		communityComments: { type: String, required: false },
-		internalNotes: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Comment",
-			required: false,
-		},
-		adminComments: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Comment",
-			required: false,
-		},
+		internalNotes: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Comment",
+			},
+		],
+		adminComments: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Comment",
+			},
+		],
 		observationChecklist: {
 			type: new mongoose.Schema(
 				{

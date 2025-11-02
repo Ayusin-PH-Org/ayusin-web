@@ -26,34 +26,34 @@ export const getProjectHandler: AppRouteHandler<GetProjectRoute> = async (
 
 		// Build response including full comment objects
 		const base = projectDocToZod(project);
-		let internalNotesObj;
-		if (project.internalNotes) {
-			const note = await Comment.findById(project.internalNotes).exec();
-			if (note) {
-				internalNotesObj = {
-					id: note._id.toString(),
-					comment: note.comment,
-					author: note.author.toString(),
-				};
-			}
+		let internalNotesArr;
+		if (project.internalNotes && project.internalNotes.length) {
+			const notes = await Comment.find({
+				_id: { $in: project.internalNotes },
+			}).exec();
+			internalNotesArr = notes.map((note) => ({
+				id: note._id.toString(),
+				comment: note.comment,
+				author: note.author.toString(),
+			}));
 		}
-		let adminCommentsObj;
-		if (project.adminComments) {
-			const note = await Comment.findById(project.adminComments).exec();
-			if (note) {
-				adminCommentsObj = {
-					id: note._id.toString(),
-					comment: note.comment,
-					author: note.author.toString(),
-				};
-			}
+		let adminCommentsArr;
+		if (project.adminComments && project.adminComments.length) {
+			const notes = await Comment.find({
+				_id: { $in: project.adminComments },
+			}).exec();
+			adminCommentsArr = notes.map((note) => ({
+				id: note._id.toString(),
+				comment: note.comment,
+				author: note.author.toString(),
+			}));
 		}
 		return c.json(
 			{
 				status: "success",
 				...base,
-				internalNotes: internalNotesObj,
-				adminComments: adminCommentsObj,
+				internalNotes: internalNotesArr,
+				adminComments: adminCommentsArr,
 			},
 			HttpStatusCodes.OK,
 		);

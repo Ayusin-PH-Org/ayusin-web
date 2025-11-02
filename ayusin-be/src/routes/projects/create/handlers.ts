@@ -12,30 +12,37 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 
 	try {
 		// Create linked comments if provided
-		const commentIDs: Record<string, any> = {};
+		const commentIDs: Record<string, any> = {
+			internalNotes: [],
+			adminComments: [],
+		};
 		if (body.internalNotes) {
-			const note = new Comment({
-				associatedID: body.generalInformation.projectID,
-				author: body.internalNotes.author,
-				comment: body.internalNotes.comment,
-				type: "project",
-				isAdmin: false,
-				isInternal: true,
-			});
-			await note.save();
-			commentIDs.internalNotes = note._id;
+			for (const noteReq of body.internalNotes) {
+				const note = new Comment({
+					associatedID: body.generalInformation.projectID,
+					author: noteReq.author,
+					comment: noteReq.comment,
+					type: "project",
+					isAdmin: false,
+					isInternal: true,
+				});
+				await note.save();
+				commentIDs.internalNotes.push(note._id);
+			}
 		}
 		if (body.adminComments) {
-			const note = new Comment({
-				associatedID: body.generalInformation.projectID,
-				author: body.adminComments.author,
-				comment: body.adminComments.comment,
-				type: "project",
-				isAdmin: true,
-				isInternal: false,
-			});
-			await note.save();
-			commentIDs.adminComments = note._id;
+			for (const noteReq of body.adminComments) {
+				const note = new Comment({
+					associatedID: body.generalInformation.projectID,
+					author: noteReq.author,
+					comment: noteReq.comment,
+					type: "project",
+					isAdmin: true,
+					isInternal: false,
+				});
+				await note.save();
+				commentIDs.adminComments.push(note._id);
+			}
 		}
 		// Build Mongoose checks array from the checklist template
 		const ocReq = body.observationChecklist;
@@ -98,18 +105,18 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 				status: "success",
 				...base,
 				internalNotes: body.internalNotes
-					? {
-						id: commentIDs.internalNotes.toString(),
-						comment: body.internalNotes.comment,
-						author: body.internalNotes.author,
-					}
+					? body.internalNotes.map((noteReq, idx) => ({
+							id: commentIDs.internalNotes[idx].toString(),
+							comment: noteReq.comment,
+							author: noteReq.author,
+						}))
 					: undefined,
 				adminComments: body.adminComments
-					? {
-						id: commentIDs.adminComments.toString(),
-						comment: body.adminComments.comment,
-						author: body.adminComments.author,
-					}
+					? body.adminComments.map((noteReq, idx) => ({
+							id: commentIDs.adminComments[idx].toString(),
+							comment: noteReq.comment,
+							author: noteReq.author,
+						}))
 					: undefined,
 			},
 			HttpStatusCodes.OK,

@@ -2,11 +2,11 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { z } from "zod";
-import { ProjectSchema } from "../schema";
+import { ProjectSchema, ProjectResponseSchema } from "../schema";
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
-	...ProjectSchema.shape,
+	...ProjectResponseSchema.shape,
 });
 
 const ErrorResponseSchema = z.object({

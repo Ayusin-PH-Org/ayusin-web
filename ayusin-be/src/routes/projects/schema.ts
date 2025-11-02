@@ -153,9 +153,25 @@ export const ProjectSchema = z.object({
 	media: z.array(MediaItem),
 	isVerified: z.boolean(),
 	communityComments: z.string(),
-	internalNotes: objectIdValidator,
-	adminComments: objectIdValidator,
+	internalNotes: z.array(objectIdValidator).optional(),
+	adminComments: z.array(objectIdValidator).optional(),
 	observationChecklist: ObservationChecklist,
+});
+
+/** Comment object returned in API responses */
+export const CommentResponseSchema = z.object({
+	id: objectIdValidator,
+	comment: z.string(),
+	author: objectIdValidator,
+});
+
+/** Extended project schema including arrays of comment objects for responses */
+export const ProjectResponseSchema = ProjectSchema.omit({
+	internalNotes: true,
+	adminComments: true,
+}).extend({
+	internalNotes: z.array(CommentResponseSchema).optional(),
+	adminComments: z.array(CommentResponseSchema).optional(),
 });
 
 export const projectDocToZod = (
@@ -182,8 +198,8 @@ export const projectDocToZod = (
 		})),
 		isVerified: project.isVerified,
 		communityComments: project.communityComments,
-		internalNotes: project.internalNotes?.toString(),
-		adminComments: project.adminComments?.toString(),
+		internalNotes: project.internalNotes?.map((id) => id.toString()) ?? [],
+		adminComments: project.adminComments?.map((id) => id.toString()) ?? [],
 		observationChecklist: {
 			projectType: project.observationChecklist.projectType,
 			checks: project.observationChecklist.checks.map((c) => ({

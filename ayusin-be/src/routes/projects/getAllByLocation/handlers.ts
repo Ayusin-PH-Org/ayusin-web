@@ -28,32 +28,32 @@ export const getProjectsByLocationHandler: AppRouteHandler<
 		const parsed = await Promise.all(
 			projects.map(async (p) => {
 				const base = projectDocToZod(p);
-				let internalNotesObj;
-				if (p.internalNotes) {
-					const note = await Comment.findById(p.internalNotes).exec();
-					if (note) {
-						internalNotesObj = {
-							id: note._id.toString(),
-							comment: note.comment,
-							author: note.author.toString(),
-						};
-					}
+				let internalNotesArr;
+				if (p.internalNotes && p.internalNotes.length) {
+					const notes = await Comment.find({
+						_id: { $in: p.internalNotes },
+					}).exec();
+					internalNotesArr = notes.map((note) => ({
+						id: note._id.toString(),
+						comment: note.comment,
+						author: note.author.toString(),
+					}));
 				}
-				let adminCommentsObj;
-				if (p.adminComments) {
-					const note = await Comment.findById(p.adminComments).exec();
-					if (note) {
-						adminCommentsObj = {
-							id: note._id.toString(),
-							comment: note.comment,
-							author: note.author.toString(),
-						};
-					}
+				let adminCommentsArr;
+				if (p.adminComments && p.adminComments.length) {
+					const notes = await Comment.find({
+						_id: { $in: p.adminComments },
+					}).exec();
+					adminCommentsArr = notes.map((note) => ({
+						id: note._id.toString(),
+						comment: note.comment,
+						author: note.author.toString(),
+					}));
 				}
 				return {
 					...base,
-					internalNotes: internalNotesObj,
-					adminComments: adminCommentsObj,
+					internalNotes: internalNotesArr,
+					adminComments: adminCommentsArr,
 				};
 			}),
 		);
