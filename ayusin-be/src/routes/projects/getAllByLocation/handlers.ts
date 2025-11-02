@@ -1,5 +1,5 @@
 import * as HttpStatusCodes from "stoker/http-status-codes";
-import { Project } from "@/db/project.model";
+import { Comment, Project } from "@/db";
 import type { AppRouteHandler } from "@/lib/types";
 import { projectDocToZod } from "../schema";
 import * as model from "./model";
@@ -24,7 +24,39 @@ export const getProjectsByLocationHandler: AppRouteHandler<
 			},
 		}).exec();
 
-		const parsed = projects.map((p) => ({ ...projectDocToZod(p) }));
+		// Build response including comment objects
+		const parsed = await Promise.all(
+			projects.map(async (p) => {
+				const base = projectDocToZod(p);
+				let internalNotesObj;
+				if (p.internalNotes) {
+					const note = await Comment.findById(p.internalNotes).exec();
+					if (note) {
+						internalNotesObj = {
+							id: note._id.toString(),
+							comment: note.comment,
+							author: note.author.toString(),
+						};
+					}
+				}
+				let adminCommentsObj;
+				if (p.adminComments) {
+					const note = await Comment.findById(p.adminComments).exec();
+					if (note) {
+						adminCommentsObj = {
+							id: note._id.toString(),
+							comment: note.comment,
+							author: note.author.toString(),
+						};
+					}
+				}
+				return {
+					...base,
+					internalNotes: internalNotesObj,
+					adminComments: adminCommentsObj,
+				};
+			}),
+		);
 		return c.json(
 			{
 				status: "success",

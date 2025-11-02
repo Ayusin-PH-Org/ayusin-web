@@ -91,8 +91,27 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 		});
 		await project.save();
 
+		// Build response including comment objects
+		const base = projectDocToZod(project);
 		return c.json(
-			{ status: "success", ...projectDocToZod(project) },
+			{
+				status: "success",
+				...base,
+				internalNotes: body.internalNotes
+					? {
+						id: commentIDs.internalNotes.toString(),
+						comment: body.internalNotes.comment,
+						author: body.internalNotes.author,
+					}
+					: undefined,
+				adminComments: body.adminComments
+					? {
+						id: commentIDs.adminComments.toString(),
+						comment: body.adminComments.comment,
+						author: body.adminComments.author,
+					}
+					: undefined,
+			},
 			HttpStatusCodes.OK,
 		);
 	} catch (error) {
