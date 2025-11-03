@@ -103,106 +103,38 @@ const CheckItem = z
 	.describe("Individual checklist item in response");
 
 const CheckStatus = z
-	.object({
-		status: z.boolean().describe("Whether the check condition was met"),
-		internalNotes: z
-			.string()
-			.optional()
-			.describe("Internal notes for the check condition"),
-	})
-	.describe("Checklist section status and notes");
+   .object({
+       description: z.string().describe("Identifier of the checklist item"),
+       status: z.boolean().describe("Whether the check condition was met"),
+       internalNotes: z
+           .string()
+           .optional()
+           .describe("Internal notes for the check condition"),
+   })
+   .describe("Checklist item identifier, status, and optional internal notes");
 
-export const DamChecklistRequestSchema = z
-	.object({
-		visible: CheckStatus.describe("Check if dam is visible and intact"),
-		noCracks: CheckStatus.describe("Check for absence of cracks in dam"),
-		spillwayNotBlocked: CheckStatus.describe(
-			"Check that spillway is not blocked",
-		),
-		noOverflow: CheckStatus.describe("Check for absence of overflow signs"),
-		accessRoads: CheckStatus.describe("Check condition of access roads"),
-		servesPurpose: CheckStatus.describe(
-			"Check if dam serves its intended purpose",
-		),
-	})
-	.optional()
-	.describe("Checklist fields specific to dam projects");
-
-export const WallChecklistRequestSchema = z
-	.object({
-		stable: CheckStatus.describe("Check wall stability"),
-		heightAppropriate: CheckStatus.describe(
-			"Check if wall height is appropriate",
-		),
-		noErosion: CheckStatus.describe("Check for absence of erosion"),
-		hasProperSlope: CheckStatus.describe("Check wall slope correctness"),
-		notClogged: CheckStatus.describe("Check that drainage is not clogged"),
-	})
-	.optional()
-	.describe("Checklist fields specific to wall projects");
-
-export const SlopeProtectionChecklistRequestSchema = z
-	.object({
-		stonesIntact: CheckStatus.describe("Check if protective stones are intact"),
-		noFreshErosion: CheckStatus.describe("Check for absence of fresh erosion"),
-		channelWidthAdequate: CheckStatus.describe(
-			"Check adequacy of channel width",
-		),
-		flowDirectionNatural: CheckStatus.describe(
-			"Check if flow direction is natural",
-		),
-		protectsRoads: CheckStatus.describe(
-			"Check if slope protection shields roads",
-		),
-		maintainance: CheckStatus.describe("Check required maintenance state"),
-	})
-	.optional()
-	.describe("Checklist fields specific to slope protection projects");
-
-export const CoastalProtectionChecklistRequestSchema = z
-	.object({
-		structureIntact: CheckStatus.describe(
-			"Check integrity of coastal structure",
-		),
-		noCracks: CheckStatus.describe("Check for absence of cracks"),
-		noUndercutting: CheckStatus.describe("Check for absence of undercutting"),
-		properMaterials: CheckStatus.describe("Check if proper materials are used"),
-		protectsCoastalHomes: CheckStatus.describe(
-			"Check if it protects coastal homes",
-		),
-		areaNotEroded: CheckStatus.describe("Check for absence of erosion in area"),
-	})
-	.optional()
-	.describe("Checklist fields specific to coastal protection projects");
 
 export const ObservationChecklistRequestSchema = z
-	.object({
-		projectType: z
-			.enum([
-				"dam",
-				"wall",
-				"floodway",
-				"pumping_station",
-				"slope_protection",
-				"coastal_protection",
-			])
-			.describe("Project category determining checklist section"),
-		dam: DamChecklistRequestSchema.describe("Dam-specific checklist section"),
-		wall: WallChecklistRequestSchema.describe(
-			"Wall-specific checklist section",
-		),
-		slopeProtection: SlopeProtectionChecklistRequestSchema.describe(
-			"Slope protection-specific checklist section",
-		),
-		coastalProtection: CoastalProtectionChecklistRequestSchema.describe(
-			"Coastal protection-specific checklist section",
-		),
-		extras: z
-			.record(z.string(), z.any())
-			.optional()
-			.describe("Flexible JSON object for additional checklist data"),
-	})
-	.describe("Request payload for project observation checklist");
+   .object({
+       projectType: z
+           .enum([
+               "dam",
+               "wall",
+               "floodway",
+               "pumping_station",
+               "slope_protection",
+               "coastal_protection",
+           ])
+           .describe("Project category determining checklist section"),
+       checks: z
+           .array(CheckStatus)
+           .describe("List of checklist item statuses and notes"),
+       extras: z
+           .record(z.string(), z.any())
+           .optional()
+           .describe("Flexible JSON object for additional checklist data"),
+   })
+   .describe("Request payload for project observation checklist");
 
 /**
  * Example payload for creating or returning a project.
@@ -239,28 +171,21 @@ export const ExampleProject = {
 	],
 	isVerified: true,
 	communityComments: "We really need to be fixed asap.",
-	observationChecklist: {
-		extras: {
-			additionalComments:
-				"The fixes for this will costs a lot and needs reconsideration from our budget.",
-		},
-		projectType: "dam",
-		dam: {
-			visible: { status: true },
-			noCracks: {
-				status: false,
-				internalNotes:
-					"There's a lot of cracks that results to water spilling during rain.",
-			},
-			spillwayNotBlocked: {
-				status: false,
-				internalNotes: "Example internal notes",
-			},
-			noOverflow: { status: true },
-			accessRoads: { status: true },
-			servesPurpose: { status: true },
-		},
-	},
+   observationChecklist: {
+       extras: {
+           additionalComments:
+               "The fixes for this will costs a lot and needs reconsideration from our budget.",
+       },
+       projectType: "dam",
+       checks: [
+           { description: "visible", status: true },
+           { description: "noCracks", status: false, internalNotes: "There's a lot of cracks that results to water spilling during rain." },
+           { description: "spillwayNotBlocked", status: false, internalNotes: "Example internal notes" },
+           { description: "noOverflow", status: true },
+           { description: "accessRoads", status: true },
+           { description: "servesPurpose", status: true },
+       ],
+   },
 	internalNotes: [
 		{
 			comment:

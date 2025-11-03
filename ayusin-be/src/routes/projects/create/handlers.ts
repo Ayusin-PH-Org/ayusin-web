@@ -46,30 +46,14 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 		}
 
 		const ocReq = body.observationChecklist;
-		const { projectType, extras } = ocReq;
-		const checklistTemplate = (ocReq as any)[projectType] as Record<
-			string,
-			{ status: boolean; internalNotes?: string }
-		> | null;
-		const checks: {
-			checkID: mongoose.Types.ObjectId;
-			description: string;
-			status: boolean;
-			note: string;
-		}[] = [];
-		if (checklistTemplate) {
-			for (const [description, { status, internalNotes }] of Object.entries(
-				checklistTemplate,
-			)) {
-				checks.push({
-					checkID: new mongoose.Types.ObjectId(),
-					description,
-					status,
-					note: internalNotes ?? "",
-				});
-			}
-		}
-		const observationChecklist = { projectType, checks, extras };
+       const { projectType, checks: checksReq, extras } = ocReq;
+       const checks = checksReq.map(({ description, status, internalNotes }) => ({
+           checkID: new mongoose.Types.ObjectId(),
+           description,
+           status,
+           note: internalNotes ?? "",
+       }));
+       const observationChecklist = { projectType, checks, extras };
 
 		// Map generalInformation.locationStr & location into GeoJSON Point
 		const gi = body.generalInformation;

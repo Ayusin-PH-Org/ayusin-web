@@ -28,37 +28,8 @@ const RequestSchema = ProjectSchema.omit({
 		adminComments: z
 			.array(z.object({ comment: z.string(), author: objectIdValidator }))
 			.optional(),
-		observationChecklist: ObservationChecklistRequestSchema.extend({
-			projectType: z
-				.enum([
-					"dam",
-					"wall",
-					"floodway",
-					"pumping_station",
-					"slope_protection",
-					"coastal_protection",
-				])
-				.describe("Project type for the checklist"),
-		}),
+		observationChecklist: ObservationChecklistRequestSchema,
 	})
-	.refine(
-		(data) => {
-			const type = data.generalInformation.type;
-			const key =
-				type === "slope_protection"
-					? "slopeProtection"
-					: type === "coastal_protection"
-						? "coastalProtection"
-						: type;
-			return !!data.observationChecklist[
-				key as keyof typeof data.observationChecklist
-			];
-		},
-		{
-			path: ["observationChecklist"],
-			message: "Checklist for selected project type is required",
-		},
-	)
 	.openapi({ example: ExampleProject });
 
 const SuccessResponseSchema = z.object({

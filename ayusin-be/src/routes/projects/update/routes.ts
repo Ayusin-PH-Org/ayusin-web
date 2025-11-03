@@ -2,7 +2,7 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
-import { ProjectSchema } from "../schema";
+import { ProjectSchema, ObservationChecklistRequestSchema } from "../schema";
 
 const ParamsSchema = z.object({
 	projectID: z.string().describe("Project ID"),
@@ -17,7 +17,11 @@ const RequestBodySchema = ProjectSchema.pick({
 	internalNotes: true,
 	adminComments: true,
 	observationChecklist: true,
-}).partial();
+})
+.extend({
+   observationChecklist: ObservationChecklistRequestSchema,
+})
+.partial();
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
