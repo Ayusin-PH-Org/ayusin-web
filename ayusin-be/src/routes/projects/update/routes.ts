@@ -30,13 +30,18 @@ const ErrorResponseSchema = z.object({
 });
 
 export const updateProjectRoute = createRoute({
-	description: "Update project by projectID",
+	summary: "Update project",
+	description:
+		"Update one or more fields of an existing project by its projectID",
 	path: "/:projectID",
 	method: "patch",
 	tags: ["Projects"],
 	request: {
 		params: ParamsSchema,
-		body: jsonContentRequired(RequestBodySchema, "Fields to update"),
+		body: jsonContentRequired(
+			RequestBodySchema,
+			"Payload with fields to update",
+		),
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(

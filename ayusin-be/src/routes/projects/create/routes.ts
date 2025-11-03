@@ -9,6 +9,7 @@ import {
 	ObservationChecklistRequestSchema,
 	ProjectSchema,
 	ProjectResponseSchema,
+	ExampleProject,
 } from "../schema";
 
 const RequestSchema = ProjectSchema.omit({
@@ -57,7 +58,8 @@ const RequestSchema = ProjectSchema.omit({
 			path: ["observationChecklist"],
 			message: "Checklist for selected project type is required",
 		},
-	);
+	)
+	.openapi({ example: ExampleProject });
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
@@ -70,12 +72,14 @@ const ErrorResponseSchema = z.object({
 });
 
 export const createProjectRoute = createRoute({
-	description: "Create a new project",
+	summary: "Create project",
+	description:
+		"Create a new project with detailed information including general info, media, observation checklist, and optional comments",
 	path: "/",
 	method: "post",
 	tags: ["Projects"],
 	request: {
-		body: jsonContentRequired(RequestSchema, "The project to create"),
+		body: jsonContentRequired(RequestSchema, "Payload to create a new project"),
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(

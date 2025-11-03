@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { ProjectSchema, ProjectResponseSchema } from "../schema";
+import { ProjectResponseSchema, ProjectSchema } from "../schema";
 
 /**
  * Query parameters for radius-based project search.
- * 'radius' is in meters; 'x' and 'y' are longitude and latitude.
+ * 'radius' is in kilometers; 'x' and 'y' are longitude and latitude.
  */
 export const getProjectsByLocationQuery = z.object({
 	x: z.string().describe("Longitude").pipe(z.coerce.number()),

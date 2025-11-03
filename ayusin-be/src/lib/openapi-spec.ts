@@ -1,9 +1,7 @@
 import { Scalar } from "@scalar/hono-api-reference";
-
-import type { AppOpenAPI } from "./types";
-
-//@ts-ignore since we're using bun runtime anyways.
+//@ts-expect-error since we're using bun runtime anyways.
 import packageMetadata from "../../package.json";
+import type { AppOpenAPI } from "./types";
 
 export default function configureOpenAPI(app: AppOpenAPI) {
 	app.doc("/openapi.json", {
@@ -17,7 +15,7 @@ export default function configureOpenAPI(app: AppOpenAPI) {
 	app.get(
 		"/docs",
 		Scalar({
-			theme: "kepler",
+			theme: "deepSpace",
 			defaultHttpClient: {
 				targetKey: "js",
 				clientKey: "axios",
