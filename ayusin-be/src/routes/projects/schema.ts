@@ -102,7 +102,7 @@ const CheckItem = z
 	})
 	.describe("Individual checklist item in response");
 
-const CheckStatus = z
+export const CheckStatus = z
    .object({
        description: z.string().describe("Identifier of the checklist item"),
        status: z.boolean().describe("Whether the check condition was met"),
