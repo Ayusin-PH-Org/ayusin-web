@@ -97,6 +97,7 @@ export const projectSchema = new mongoose.Schema(
 							note: { type: String, required: false },
 						},
 					],
+					extras: { type: mongoose.Schema.Types.Mixed, required: false },
 				},
 				{ _id: false },
 			),

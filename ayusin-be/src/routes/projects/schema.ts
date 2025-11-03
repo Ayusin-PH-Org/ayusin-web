@@ -127,9 +127,11 @@ export const ObservationChecklistRequestSchema = z.object({
 	wall: WallChecklistRequestSchema,
 	slopeProtection: SlopeProtectionChecklistRequestSchema,
 	coastalProtection: CoastalProtectionChecklistRequestSchema,
+	extras: z.record(z.string(), z.any()).optional(),
 });
 
 const ObservationChecklist = z.object({
+	extras: z.record(z.string(), z.any()).optional(),
 	projectType: z.enum([
 		"dam",
 		"wall",
@@ -208,6 +210,7 @@ export const projectDocToZod = (
 				status: c.status,
 				note: c.note ?? undefined,
 			})),
+			extras: project.observationChecklist.extras ?? null,
 		},
 	});
 };
