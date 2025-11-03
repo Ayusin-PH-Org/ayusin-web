@@ -1,6 +1,6 @@
+import mongoose from "mongoose";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import type { AppRouteHandler } from "@/lib/types";
-import mongoose from "mongoose";
 import { Comment, Project } from "../../../db";
 import { projectDocToZod } from "../schema";
 import type { CreateProjectRoute } from "./routes";
@@ -44,9 +44,9 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 				commentIDs.adminComments.push(note._id);
 			}
 		}
-		// Build Mongoose checks array from the checklist template
+
 		const ocReq = body.observationChecklist;
-		const { projectType } = ocReq;
+		const { projectType, extras } = ocReq;
 		const checklistTemplate = (ocReq as any)[projectType] as Record<
 			string,
 			{ status: boolean; internalNotes?: string }
@@ -69,7 +69,7 @@ export const createProjectHandler: AppRouteHandler<CreateProjectRoute> = async (
 				});
 			}
 		}
-		const observationChecklist = { projectType, checks };
+		const observationChecklist = { projectType, checks, extras };
 
 		// Map generalInformation.locationStr & location into GeoJSON Point
 		const gi = body.generalInformation;
