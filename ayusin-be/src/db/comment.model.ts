@@ -2,22 +2,19 @@ import * as mongoose from "mongoose";
 
 export const commentSchema = new mongoose.Schema(
 	{
-		version: { type: Number, required: true },
-		text: { type: String, required: true },
-		upvotes: { type: Number, required: true, default: 0 },
-		userID: {
+		associatedID: { type: String, required: true },
+		author: {
 			type: mongoose.Schema.Types.ObjectId,
-			required: true,
 			ref: "User",
-		},
-		reportID: {
-			type: mongoose.Schema.Types.ObjectId,
 			required: true,
-			ref: "Report",
 		},
-		isInternal: {
-			type: Boolean,
-			default: false,
+		isInternal: { type: Boolean, required: true, default: false },
+		isAdmin: { type: Boolean, required: true, default: false },
+		comment: { type: String, required: true },
+		type: {
+			type: String,
+			enum: ["project", "report"] as const,
+			required: true,
 		},
 	},
 	{ timestamps: true },

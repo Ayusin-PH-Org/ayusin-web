@@ -1,13 +1,13 @@
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import createApp from "./lib/create-app";
 import configureOpenAPI from "./lib/openapi-spec";
+import comments from "./routes/comments/index";
 import departments from "./routes/departments/index";
 import index from "./routes/index";
-import members from "./routes/members/index";
-import reports from "./routes/reports/index";
-import comments from "./routes/comments/index";
-import projects from "./routes/projects/index";
 import media from "./routes/media/index";
+import members from "./routes/members/index";
+import projects from "./routes/projects/index";
+import reports from "./routes/reports/index";
 import roles from "./routes/roles/index";
 
 const app = createApp();
@@ -36,7 +36,7 @@ const routes = [
 ];
 
 routes.forEach((route) => {
-	app.route("/", route);
+	app.route("/api/v1", route);
 });
 
 export default app;

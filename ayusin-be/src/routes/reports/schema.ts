@@ -1,13 +1,7 @@
-import mongoose from "mongoose";
+import type mongoose from "mongoose";
 import { z } from "zod";
-import { Report } from "@/db";
-import { objectIdValidator } from "@/lib/utils";
-
-// TODO: Use proper float32/64 depending on db
-const Location = z.object({
-	x: z.number(),
-	y: z.number(),
-});
+import type { Report } from "@/db";
+import { locationValidator, objectIdValidator } from "@/lib/utils";
 
 export const ReportSchema = z.object({
 	id: objectIdValidator,
@@ -20,7 +14,7 @@ export const ReportSchema = z.object({
 	labels: z.array(z.string()),
 	media_links: z.array(z.string()),
 	upvotes: z.number(),
-	location: Location,
+	location: locationValidator,
 	report_status: z.enum([
 		"NEW",
 		"TRIAGED",

@@ -1,6 +1,6 @@
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import type { AppRouteHandler } from "@/lib/types";
-import { Project } from "../../../db";
+import { Project, Comment } from "../../../db";
 import { projectDocToZod } from "../schema";
 import type { GetProjectRoute } from "./routes";
 
@@ -24,8 +24,37 @@ export const getProjectHandler: AppRouteHandler<GetProjectRoute> = async (
 			);
 		}
 
+		// Build response including full comment objects
+		const base = projectDocToZod(project);
+		let internalNotesArr;
+		if (project.internalNotes && project.internalNotes.length) {
+			const notes = await Comment.find({
+				_id: { $in: project.internalNotes },
+			}).exec();
+			internalNotesArr = notes.map((note) => ({
+				id: note._id.toString(),
+				comment: note.comment,
+				author: note.author.toString(),
+			}));
+		}
+		let adminCommentsArr;
+		if (project.adminComments && project.adminComments.length) {
+			const notes = await Comment.find({
+				_id: { $in: project.adminComments },
+			}).exec();
+			adminCommentsArr = notes.map((note) => ({
+				id: note._id.toString(),
+				comment: note.comment,
+				author: note.author.toString(),
+			}));
+		}
 		return c.json(
-			{ status: "success", ...projectDocToZod(project) },
+			{
+				status: "success",
+				...base,
+				internalNotes: internalNotesArr,
+				adminComments: adminCommentsArr,
+			},
 			HttpStatusCodes.OK,
 		);
 	} catch (error) {

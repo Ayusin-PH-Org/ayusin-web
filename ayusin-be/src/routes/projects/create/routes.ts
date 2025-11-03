@@ -2,19 +2,43 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
-import { ProjectSchema, ObservationChecklistRequestSchema } from "../schema";
+import { objectIdValidator } from "@/lib/utils";
+import {
+	GeneralInformationRequestSchema,
+	MediaItemRequestSchema,
+	ObservationChecklistRequestSchema,
+	ProjectSchema,
+	ProjectResponseSchema,
+} from "../schema";
 
-const RequestSchema = ProjectSchema.pick({
-	generalInformation: true,
-	isSatisfactory: true,
-	media: true,
-	isVerified: true,
-	communityComments: true,
+const RequestSchema = ProjectSchema.omit({
+	id: true,
+	created_at: true,
+	updated_at: true,
 	internalNotes: true,
 	adminComments: true,
 })
 	.extend({
-		observationChecklist: ObservationChecklistRequestSchema,
+		generalInformation: GeneralInformationRequestSchema,
+		media: z.array(MediaItemRequestSchema),
+		internalNotes: z
+			.array(z.object({ comment: z.string(), author: objectIdValidator }))
+			.optional(),
+		adminComments: z
+			.array(z.object({ comment: z.string(), author: objectIdValidator }))
+			.optional(),
+		observationChecklist: ObservationChecklistRequestSchema.extend({
+			projectType: z
+				.enum([
+					"dam",
+					"wall",
+					"floodway",
+					"pumping_station",
+					"slope_protection",
+					"coastal_protection",
+				])
+				.describe("Project type for the checklist"),
+		}),
 	})
 	.refine(
 		(data) => {
@@ -37,7 +61,7 @@ const RequestSchema = ProjectSchema.pick({
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
-	...ProjectSchema.shape,
+	...ProjectResponseSchema.shape,
 });
 
 const ErrorResponseSchema = z.object({

@@ -9,6 +9,10 @@ export function pinoLogger() {
 		pino: pino(
 			{
 				level: env?.LOG_LEVEL || "info",
+				redact: {
+					paths: ["req.headers.authorization"],
+					censor: "***REDACTED***",
+				},
 			},
 			process.env.NODE_ENV === "production" ? undefined : pretty(),
 		),

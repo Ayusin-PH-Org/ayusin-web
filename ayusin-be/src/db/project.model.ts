@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+import { pointSchema } from "./point.model";
 
 export const projectSchema = new mongoose.Schema(
 	{
@@ -8,7 +9,8 @@ export const projectSchema = new mongoose.Schema(
 					projectID: { type: String, required: true },
 					contractID: { type: String, required: true },
 					projectName: { type: String, required: true },
-					location: { type: String, required: true },
+					locationStr: { type: String, required: true },
+					location: { type: pointSchema, required: true, index: "2dsphere" },
 					type: {
 						type: String,
 						enum: [
@@ -60,16 +62,18 @@ export const projectSchema = new mongoose.Schema(
 		],
 		isVerified: { type: Boolean, required: true },
 		communityComments: { type: String, required: false },
-		internalNotes: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Comment",
-			required: false,
-		},
-		adminComments: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Comment",
-			required: false,
-		},
+		internalNotes: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Comment",
+			},
+		],
+		adminComments: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Comment",
+			},
+		],
 		observationChecklist: {
 			type: new mongoose.Schema(
 				{
@@ -90,7 +94,7 @@ export const projectSchema = new mongoose.Schema(
 							checkID: { type: mongoose.Schema.Types.ObjectId, required: true },
 							description: { type: String, required: true },
 							status: { type: Boolean, required: true },
-							note: { type: String, required: true },
+							note: { type: String, required: false },
 						},
 					],
 				},

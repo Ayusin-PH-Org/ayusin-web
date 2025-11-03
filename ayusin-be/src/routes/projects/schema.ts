@@ -1,14 +1,19 @@
 import type mongoose from "mongoose";
 import { z } from "zod";
 import type { Project } from "@/db";
-import { objectIdValidator } from "@/lib/utils";
+import {
+	dateToYMDValidator,
+	locationValidator,
+	objectIdValidator,
+} from "@/lib/utils";
 
 // General information about the project
 const GeneralInformation = z.object({
 	projectID: z.string(),
 	contractID: z.string(),
 	projectName: z.string(),
-	location: z.string(),
+	locationStr: z.string(),
+	location: locationValidator,
 	type: z.enum([
 		"dam",
 		"wall",
@@ -20,31 +25,47 @@ const GeneralInformation = z.object({
 	dpwhImplementingOffice: z.string(),
 	contractor: z.string(),
 	totalCost: z.number(),
-	fundingYear: z.iso.datetime(),
-	yearStart: z.iso.date(),
-	yearEnd: z.iso.date(),
+	fundingYear: z.date().transform((date) => date.getFullYear().toString()),
+	yearStart: dateToYMDValidator,
+	yearEnd: dateToYMDValidator,
 	implementationStatus: z.enum(["completed", "in_progress"]),
 	implementationStatusPercentage: z.number().int().min(0).max(100),
 	paymentStatus: z.enum(["paid", "partial"]),
 	paymentStatusPercentage: z.number().int().min(0).max(100),
 	monitors: z.array(z.string()),
+	dateOfVisit: dateToYMDValidator,
+});
+
+export const GeneralInformationRequestSchema = GeneralInformation.extend({
+	locationStr: z.string().describe("Human-readable location address"),
+	location: z
+		.object({ x: z.number(), y: z.number() })
+		.describe(
+			"Location coordinates in terms of longitude (x) and latitude (y)",
+		),
+	fundingYear: z.string(),
+	yearStart: z.iso.date(),
+	yearEnd: z.iso.date(),
 	dateOfVisit: z.iso.date(),
 });
 
 const MediaItem = z.object({
-	dateUploaded: z.iso.date(),
+	dateUploaded: z.date(),
 	uploader: objectIdValidator,
 	url: z.url(),
+});
+
+export const MediaItemRequestSchema = MediaItem.extend({
+	dateUploaded: z.iso.date(),
 });
 
 const CheckItem = z.object({
 	checkID: objectIdValidator,
 	description: z.string(),
 	status: z.boolean(),
-	note: z.string(),
+	note: z.string().optional(),
 });
 
-// API-only checklist templates matching src/db/checklist.json
 const CheckStatus = z.object({
 	status: z.boolean(),
 	internalNotes: z.string().optional(),
@@ -94,6 +115,14 @@ export const CoastalProtectionChecklistRequestSchema = z
 	.optional();
 
 export const ObservationChecklistRequestSchema = z.object({
+	projectType: z.enum([
+		"dam",
+		"wall",
+		"floodway",
+		"pumping_station",
+		"slope_protection",
+		"coastal_protection",
+	]),
 	dam: DamChecklistRequestSchema,
 	wall: WallChecklistRequestSchema,
 	slopeProtection: SlopeProtectionChecklistRequestSchema,
@@ -124,17 +153,43 @@ export const ProjectSchema = z.object({
 	media: z.array(MediaItem),
 	isVerified: z.boolean(),
 	communityComments: z.string(),
-	internalNotes: objectIdValidator,
-	adminComments: objectIdValidator,
+	internalNotes: z.array(objectIdValidator).optional(),
+	adminComments: z.array(objectIdValidator).optional(),
 	observationChecklist: ObservationChecklist,
 });
 
-export const projectDocToZod = (project: mongoose.HydratedDocument<Project>) =>
-	ProjectSchema.parse({
+/** Comment object returned in API responses */
+export const CommentResponseSchema = z.object({
+	id: objectIdValidator,
+	comment: z.string(),
+	author: objectIdValidator,
+});
+
+/** Extended project schema including arrays of comment objects for responses */
+export const ProjectResponseSchema = ProjectSchema.omit({
+	internalNotes: true,
+	adminComments: true,
+}).extend({
+	internalNotes: z.array(CommentResponseSchema).optional(),
+	adminComments: z.array(CommentResponseSchema).optional(),
+});
+
+export const projectDocToZod = (
+	project: mongoose.HydratedDocument<Project>,
+) => {
+	const projectObject = project.toObject();
+
+	return ProjectSchema.parse({
 		id: project._id.toString(),
 		created_at: project.createdAt,
 		updated_at: project.updatedAt,
-		generalInformation: project.generalInformation,
+		generalInformation: {
+			...projectObject.generalInformation,
+			location: {
+				x: project.generalInformation.location.coordinates[0],
+				y: project.generalInformation.location.coordinates[1],
+			},
+		},
 		isSatisfactory: project.isSatisfactory,
 		media: project.media.map((m) => ({
 			dateUploaded: m.dateUploaded,
@@ -143,15 +198,16 @@ export const projectDocToZod = (project: mongoose.HydratedDocument<Project>) =>
 		})),
 		isVerified: project.isVerified,
 		communityComments: project.communityComments,
-		internalNotes: project.internalNotes?.toString(),
-		adminComments: project.adminComments?.toString(),
+		internalNotes: project.internalNotes?.map((id) => id.toString()) ?? [],
+		adminComments: project.adminComments?.map((id) => id.toString()) ?? [],
 		observationChecklist: {
 			projectType: project.observationChecklist.projectType,
 			checks: project.observationChecklist.checks.map((c) => ({
 				checkID: c.checkID.toString(),
 				description: c.description,
 				status: c.status,
-				note: c.note,
+				note: c.note ?? undefined,
 			})),
 		},
 	});
+};
