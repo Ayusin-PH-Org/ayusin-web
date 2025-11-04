@@ -103,38 +103,37 @@ const CheckItem = z
 	.describe("Individual checklist item in response");
 
 export const CheckStatus = z
-   .object({
-       description: z.string().describe("Identifier of the checklist item"),
-       status: z.boolean().describe("Whether the check condition was met"),
-       internalNotes: z
-           .string()
-           .optional()
-           .describe("Internal notes for the check condition"),
-   })
-   .describe("Checklist item identifier, status, and optional internal notes");
-
+	.object({
+		description: z.string().describe("Identifier of the checklist item"),
+		status: z.boolean().describe("Whether the check condition was met"),
+		internalNotes: z
+			.string()
+			.optional()
+			.describe("Internal notes for the check condition"),
+	})
+	.describe("Checklist item identifier, status, and optional internal notes");
 
 export const ObservationChecklistRequestSchema = z
-   .object({
-       projectType: z
-           .enum([
-               "dam",
-               "wall",
-               "floodway",
-               "pumping_station",
-               "slope_protection",
-               "coastal_protection",
-           ])
-           .describe("Project category determining checklist section"),
-       checks: z
-           .array(CheckStatus)
-           .describe("List of checklist item statuses and notes"),
-       extras: z
-           .record(z.string(), z.any())
-           .optional()
-           .describe("Flexible JSON object for additional checklist data"),
-   })
-   .describe("Request payload for project observation checklist");
+	.object({
+		projectType: z
+			.enum([
+				"dam",
+				"wall",
+				"floodway",
+				"pumping_station",
+				"slope_protection",
+				"coastal_protection",
+			])
+			.describe("Project category determining checklist section"),
+		checks: z
+			.array(CheckStatus)
+			.describe("List of checklist item statuses and notes"),
+		extras: z
+			.record(z.string(), z.any())
+			.optional()
+			.describe("Flexible JSON object for additional checklist data"),
+	})
+	.describe("Request payload for project observation checklist");
 
 /**
  * Example payload for creating or returning a project.
@@ -171,21 +170,30 @@ export const ExampleProject = {
 	],
 	isVerified: true,
 	communityComments: "We really need to be fixed asap.",
-   observationChecklist: {
-       extras: {
-           additionalComments:
-               "The fixes for this will costs a lot and needs reconsideration from our budget.",
-       },
-       projectType: "dam",
-       checks: [
-           { description: "visible", status: true },
-           { description: "noCracks", status: false, internalNotes: "There's a lot of cracks that results to water spilling during rain." },
-           { description: "spillwayNotBlocked", status: false, internalNotes: "Example internal notes" },
-           { description: "noOverflow", status: true },
-           { description: "accessRoads", status: true },
-           { description: "servesPurpose", status: true },
-       ],
-   },
+	observationChecklist: {
+		extras: {
+			additionalComments:
+				"The fixes for this will costs a lot and needs reconsideration from our budget.",
+		},
+		projectType: "dam",
+		checks: [
+			{ description: "visible", status: true },
+			{
+				description: "noCracks",
+				status: false,
+				internalNotes:
+					"There's a lot of cracks that results to water spilling during rain.",
+			},
+			{
+				description: "spillwayNotBlocked",
+				status: false,
+				internalNotes: "Example internal notes",
+			},
+			{ description: "noOverflow", status: true },
+			{ description: "accessRoads", status: true },
+			{ description: "servesPurpose", status: true },
+		],
+	},
 	internalNotes: [
 		{
 			comment:

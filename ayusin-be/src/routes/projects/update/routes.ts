@@ -18,10 +18,10 @@ const RequestBodySchema = ProjectSchema.pick({
 	adminComments: true,
 	observationChecklist: true,
 })
-.extend({
-   observationChecklist: ObservationChecklistRequestSchema,
-})
-.partial();
+	.extend({
+		observationChecklist: ObservationChecklistRequestSchema,
+	})
+	.partial();
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
