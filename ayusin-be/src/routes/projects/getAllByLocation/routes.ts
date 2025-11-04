@@ -7,7 +7,9 @@ import * as model from "./model";
  * GET /projects?x&y&radius — search projects within radius of point.
  */
 export const getProjectsByLocationRoute = createRoute({
-	description: "Search projects within a radius of given coordinates",
+	summary: "Search projects by location",
+	description:
+		"Retrieve projects within a specified radius (in kilometers) of given coordinates (longitude x, latitude y)",
 	path: "/",
 	method: "get",
 	tags: ["Projects"],

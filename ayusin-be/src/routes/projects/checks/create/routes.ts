@@ -2,26 +2,16 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
-import { ProjectSchema, ObservationChecklistRequestSchema } from "../schema";
+import { CheckStatus, ProjectSchema } from "../../schema";
 
 const ParamsSchema = z.object({
-	projectID: z.string().describe("Project ID"),
+	projectId: z.string().describe("Project identifier to append the check to"),
 });
 
-const RequestBodySchema = ProjectSchema.pick({
-	generalInformation: true,
-	isSatisfactory: true,
-	media: true,
-	isVerified: true,
-	communityComments: true,
-	internalNotes: true,
-	adminComments: true,
-	observationChecklist: true,
-})
-	.extend({
-		observationChecklist: ObservationChecklistRequestSchema,
-	})
-	.partial();
+/** Payload for creating a new checklist item in a project */
+const CreateCheckRequestSchema = CheckStatus.describe(
+	"New checklist item description, status, and optional internal notes",
+);
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
@@ -33,24 +23,24 @@ const ErrorResponseSchema = z.object({
 	description: z.string(),
 });
 
-export const updateProjectRoute = createRoute({
-	summary: "Update project",
+export const createCheckRoute = createRoute({
+	summary: "Add a checklist item to a project",
 	description:
-		"Update one or more fields of an existing project by its projectID",
-	path: "/:projectID",
-	method: "patch",
+		"Append a new check entry to an existing project observation checklist",
+	path: "/:projectId/checks",
+	method: "post",
 	tags: ["Projects"],
 	request: {
 		params: ParamsSchema,
 		body: jsonContentRequired(
-			RequestBodySchema,
-			"Payload with fields to update",
+			CreateCheckRequestSchema,
+			"Checklist item to add to the project",
 		),
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
 			SuccessResponseSchema,
-			"Successfully updated project",
+			"Project record with the added checklist item",
 		),
 		[HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
 			ErrorResponseSchema,
@@ -63,4 +53,4 @@ export const updateProjectRoute = createRoute({
 	},
 });
 
-export type UpdateProjectRoute = typeof updateProjectRoute;
+export type CreateCheckRoute = typeof createCheckRoute;

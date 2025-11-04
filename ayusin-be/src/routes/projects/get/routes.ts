@@ -2,7 +2,7 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { z } from "zod";
-import { ProjectSchema, ProjectResponseSchema } from "../schema";
+import { ProjectResponseSchema, ProjectSchema } from "../schema";
 
 const SuccessResponseSchema = z.object({
 	status: z.literal("success"),
@@ -19,8 +19,9 @@ const ParamsSchema = z.object({
 });
 
 export const getProjectRoute = createRoute({
-	description: "Get project by projectID",
-	path: "/:projectID",
+	summary: "Get project",
+	description: "Retrieve a single project by its projectID",
+	path: "/{projectID}",
 	method: "get",
 	tags: ["Projects"],
 	request: {
