@@ -17,14 +17,49 @@ export const DepartmentSchema = z.object({
 	roles: z.array(z.string()),
 });
 
-export const createDepartmentRequest = DepartmentSchema.pick({
-	name: true,
-	shortname: true,
-	contact: true,
-	email: true,
-	headquarter_address: true,
-	headquarter_location: true,
-});
+/** Example payload for creating a department */
+export const ExampleDepartment = {
+	name: "Department of Public Works and Highways",
+	shortname: "DPWH",
+	contact: "(+63) 910-832-1832",
+	email: "support@dpwh.gov.ph",
+	headquarter_address:
+		"Department of Public Works and Highways - Head Office, Manila",
+	headquarter_location: { x: 32.9, y: 21.42 },
+} as const;
+
+export const createDepartmentRequest = z
+	.object({
+		name: z
+			.string()
+			.describe("Full department name")
+			.openapi({ example: ExampleDepartment.name }),
+		shortname: z
+			.string()
+			.describe("Abbreviated department name")
+			.optional()
+			.openapi({ example: ExampleDepartment.shortname }),
+		contact: z
+			.string()
+			.describe("Department contact number")
+			.optional()
+			.openapi({ example: ExampleDepartment.contact }),
+		email: z
+			.string()
+			.describe("Department contact email")
+			.optional()
+			.openapi({ example: ExampleDepartment.email }),
+		headquarter_address: z
+			.string()
+			.describe("Headquarter address")
+			.optional()
+			.openapi({ example: ExampleDepartment.headquarter_address }),
+		headquarter_location: Location.describe(
+			"Headquarter geographic location",
+		).openapi({ example: ExampleDepartment.headquarter_location }),
+	})
+	.describe("Payload to create a new department")
+	.openapi({ example: ExampleDepartment });
 
 export const createDepartmentOkResponse = z.object({
 	status: z.literal("success"),
