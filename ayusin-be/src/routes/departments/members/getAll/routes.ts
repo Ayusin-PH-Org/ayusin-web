@@ -3,7 +3,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["Departments", "member"];
+const tags = ["Departments", "Members"];
 
 export const getAllMembersRoute = createRoute({
 	summary: "List department members",

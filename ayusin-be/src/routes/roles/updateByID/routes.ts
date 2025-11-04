@@ -4,9 +4,11 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["role"];
+const tags = ["Roles"];
 
 export const updateByID = createRoute({
+	summary: "Update role",
+	description: "Modify one or more attributes of an existing role by its ID",
 	path: "/{id}",
 	method: "patch",
 	tags,
@@ -14,21 +16,21 @@ export const updateByID = createRoute({
 		params: ParamsIDSchema,
 		body: jsonContentRequired(
 			model.updateRoleByIDRequest,
-			"The properties of role to update.",
+			"Payload to update the role",
 		),
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
 			model.updateRoleByIDResponse,
-			"The updated properties of the role.",
+			"Successfully updated the role",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
 			model.updateRoleByIDErrorResponse,
-			"Error message when the role is not found.",
+			"Role not found",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
 			model.updateRoleByIDErrorResponse,
-			"Error message when something wrong occured in the server.",
+			"Internal server error when updating role",
 		),
 	},
 });

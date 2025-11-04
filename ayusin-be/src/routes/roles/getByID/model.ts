@@ -27,12 +27,14 @@ export const RoleSchema = z.object({
 	access_scope: z.array(z.string()),
 });
 
-export const getDepartmentByIDResponse = z.object({
+/** Success response for retrieving a role by ID */
+export const getRoleByIDResponse = z.object({
 	status: z.literal("success"),
 	...RoleSchema.shape,
 });
 
-export const getDepartmentByIDErrorResponse = z.object({
+/** Error response when a role is not found or retrieval fails */
+export const getRoleByIDErrorResponse = z.object({
 	status: z.literal("error"),
 	description: z.string(),
 });

@@ -30,10 +30,6 @@ export const updateRoleByID: AppRouteHandler<UpdateByIDRoute> = async (c) => {
 			role.set("description", body.description);
 		}
 
-		if (!isNullOrUndefined(body.parent_role)) {
-			role.set("parentRole", body.parent_role);
-		}
-
 		if (!isNullOrUndefined(body.importance)) {
 			role.set("importance", body.importance);
 		}

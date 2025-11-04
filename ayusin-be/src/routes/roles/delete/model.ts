@@ -13,11 +13,13 @@ export const ParamsIDSchema = z.object({
 		}),
 });
 
-export const deleteDepartmentByIDResponse = z.object({
+/** Success response for deleting a role */
+export const deleteRoleByIDResponse = z.object({
 	status: z.literal("success"),
 });
 
-export const deleteDepartmentByIDErrorResponse = z.object({
+/** Error response when deleting a role fails or role not found */
+export const deleteRoleByIDErrorResponse = z.object({
 	status: z.literal("error"),
 	description: z.string(),
 });

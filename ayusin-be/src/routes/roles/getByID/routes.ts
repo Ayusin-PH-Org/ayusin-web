@@ -4,9 +4,11 @@ import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["role"];
+const tags = ["Roles"];
 
 export const getByID = createRoute({
+	summary: "Get role by ID",
+	description: "Retrieve details of a role by its unique ID",
 	path: "/{id}",
 	method: "get",
 	tags,
@@ -15,16 +17,16 @@ export const getByID = createRoute({
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
-			model.getDepartmentByIDResponse,
-			"The retrieved role.",
+			model.getRoleByIDResponse,
+			"Successfully retrieved the role",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
-			model.getDepartmentByIDErrorResponse,
-			"Error message when the role is not found.",
+			model.getRoleByIDErrorResponse,
+			"Role not found",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
-			model.getDepartmentByIDErrorResponse,
-			"Error message when something wrong occured in the server.",
+			model.getRoleByIDErrorResponse,
+			"Internal server error when retrieving role",
 		),
 	},
 });

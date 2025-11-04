@@ -4,9 +4,11 @@ import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["role"];
+const tags = ["Roles"];
 
 export const deleteByID = createRoute({
+	summary: "Delete role",
+	description: "Remove an existing role by its ID",
 	path: "/{id}",
 	method: "delete",
 	tags,
@@ -15,16 +17,16 @@ export const deleteByID = createRoute({
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
-			model.deleteDepartmentByIDResponse,
-			"The message when the role is successfully deleted.",
+			model.deleteRoleByIDResponse,
+			"Successfully deleted the role",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
-			model.deleteDepartmentByIDErrorResponse,
-			"Error message when the role is not found.",
+			model.deleteRoleByIDErrorResponse,
+			"Role not found",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
-			model.deleteDepartmentByIDErrorResponse,
-			"Error message when something wrong occured in the server.",
+			model.deleteRoleByIDErrorResponse,
+			"Internal server error when deleting role",
 		),
 	},
 });

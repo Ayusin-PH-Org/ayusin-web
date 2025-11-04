@@ -11,7 +11,6 @@ export const createRole: AppRouteHandler<CreateRoute> = async (c) => {
 			name: body.name,
 			description: body.description,
 			importance: body.importance,
-			parentRole: body.parent_role,
 			accessScope: body.access_scope,
 			clearanceLevel: body.clearance_level,
 		});
@@ -24,7 +23,6 @@ export const createRole: AppRouteHandler<CreateRoute> = async (c) => {
 				id: role._id.toString(),
 				name: role.name,
 				description: role.description ?? undefined,
-				parent_role: role.parentRole ?? undefined,
 				importance: role.importance,
 				access_scope: role.accessScope,
 				clearance_level: role.clearanceLevel,

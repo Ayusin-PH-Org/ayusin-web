@@ -3,9 +3,11 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["member"];
+const tags = ["Members"];
 
 export const getByUserID = createRoute({
+	summary: "Get member by user ID",
+	description: "Fetch the member record associated with the given user ID",
 	path: "/{user_id}",
 	method: "get",
 	tags,
@@ -13,15 +15,15 @@ export const getByUserID = createRoute({
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
 			model.getMemberByUserIDResponse,
-			"The retrieved member.",
+			"Successfully retrieved member",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
 			model.getMemberByUserIDErrorResponse,
-			"Member not found.",
+			"Member not found",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
 			model.getMemberByUserIDErrorResponse,
-			"Error message when something wrong occurred in the server.",
+			"Internal server error while fetching member",
 		),
 	},
 });

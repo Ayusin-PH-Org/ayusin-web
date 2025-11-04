@@ -3,38 +3,41 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["member"];
+const tags = ["Members"];
 
 export const create = createRoute({
+	summary: "Create member",
+	description:
+		"Add a user as a member of a department with associated role and contact details",
 	path: "/",
 	method: "post",
 	tags,
 	request: {
 		body: jsonContentRequired(
 			model.createMemberRequest,
-			"The member to create",
+			"Payload to create a new member",
 		),
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
 			model.createMemberOkResponse,
-			"Success response",
+			"Successfully created the member",
 		),
 		[HttpStatusCodes.UNAUTHORIZED]: jsonContent(
 			model.createMemberErrorResponse,
-			"Unauthorized. Missing 'Authorization' header.",
+			"Unauthorized: missing or invalid authentication",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
 			model.createMemberErrorResponse,
-			"Either the `department_id` or `role_id` is not found.",
+			"Referenced department or role not found",
 		),
 		[HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
 			model.createMemberErrorResponse,
-			"'role' must be of type string.",
+			"Validation error in member payload",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
 			model.createMemberErrorResponse,
-			"Error message when something wrong occurred in the server.",
+			"Internal server error while creating member",
 		),
 	},
 });
