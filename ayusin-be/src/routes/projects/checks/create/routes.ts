@@ -2,14 +2,14 @@ import { createRoute } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
-import { CheckStatus, ProjectSchema } from "../schema";
+import { CheckStatus, ProjectSchema } from "../../schema";
 
 const ParamsSchema = z.object({
    projectId: z.string().describe("Project identifier to append the check to"),
 });
 
-/** Payload for adding a new checklist item to a project */
-const AddCheckRequestSchema = CheckStatus.describe(
+/** Payload for creating a new checklist item in a project */
+const CreateCheckRequestSchema = CheckStatus.describe(
    "New checklist item description, status, and optional internal notes",
 );
 
@@ -23,7 +23,7 @@ const ErrorResponseSchema = z.object({
    description: z.string(),
 });
 
-export const addCheckRoute = createRoute({
+export const createCheckRoute = createRoute({
    summary: "Add a checklist item to a project",
    description: "Append a new check entry to an existing project observation checklist",
    path: "/:projectId/checks",
@@ -32,7 +32,7 @@ export const addCheckRoute = createRoute({
    request: {
       params: ParamsSchema,
       body: jsonContentRequired(
-         AddCheckRequestSchema,
+         CreateCheckRequestSchema,
          "Checklist item to add to the project",
       ),
    },
@@ -52,4 +52,4 @@ export const addCheckRoute = createRoute({
    },
 });
 
-export type AddCheckRoute = typeof addCheckRoute;
+export type CreateCheckRoute = typeof createCheckRoute;

@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import type { AppRouteHandler } from "@/lib/types";
-import { Project } from "../../../db";
-import { projectDocToZod } from "../schema";
-import type { AddCheckRoute } from "./routes";
+import { Project } from "../../../../db";
+import { projectDocToZod } from "../../schema";
+import type { CreateCheckRoute } from "./routes";
 
-export const addCheckHandler: AppRouteHandler<AddCheckRoute> = async (c) => {
+export const createCheckHandler: AppRouteHandler<CreateCheckRoute> = async (c) => {
    const { projectId } = c.req.valid("param");
    const { description, status, internalNotes } = c.req.valid("json");
    try {

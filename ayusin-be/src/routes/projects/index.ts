@@ -6,7 +6,8 @@ import {
 	getProjectsByLocationRoute,
 } from "./getAllByLocation";
 import { getProjectHandler, getProjectRoute } from "./get";
-import { addCheckHandler, addCheckRoute } from "./checks";
+import { createCheckHandler, createCheckRoute } from "./checks/create";
+import { updateCheckHandler, updateCheckRoute } from "./checks/update";
 
 const router = createClerkRouter()
 	.basePath("/projects")
@@ -14,6 +15,7 @@ const router = createClerkRouter()
 	.openapi(getProjectsByLocationRoute, getProjectsByLocationHandler)
 	.openapi(getProjectRoute, getProjectHandler)
 	.openapi(updateProjectRoute, updateProjectHandler)
-	.openapi(addCheckRoute, addCheckHandler);
+	.openapi(createCheckRoute, createCheckHandler)
+	.openapi(updateCheckRoute, updateCheckHandler);
 
 export default router;
