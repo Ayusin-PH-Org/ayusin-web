@@ -6,7 +6,9 @@ import { z } from "zod";
 
 // Routes for uploading media via multipart/form-data
 export const uploadMediaRoute = createRoute({
-	description: "Upload image or video to Azure Blob Storage",
+	summary: "Upload media",
+	description:
+		"Upload an image or video file to Azure Blob Storage and receive its public URL",
 	path: "/",
 	method: "post",
 	tags: ["Media"],
