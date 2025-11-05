@@ -4,9 +4,11 @@ import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["department"];
+const tags = ["Departments"];
 
 export const getByID = createRoute({
+	summary: "Get department by ID",
+	description: "Retrieve a department's details by its unique ID",
 	path: "/{id}",
 	method: "get",
 	tags,

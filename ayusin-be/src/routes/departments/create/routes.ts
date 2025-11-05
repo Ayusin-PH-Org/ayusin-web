@@ -3,9 +3,12 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["department"];
+const tags = ["Departments"];
 
 export const create = createRoute({
+	summary: "Create department",
+	description:
+		"Create a new department record with name, shortname, contact, email, and headquarter details",
 	path: "/",
 	method: "post",
 	tags,

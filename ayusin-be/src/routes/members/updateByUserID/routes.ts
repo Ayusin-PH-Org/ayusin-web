@@ -3,9 +3,11 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["member"];
+const tags = ["Members"];
 
 export const updateByUserID = createRoute({
+	summary: "Update member",
+	description: "Update details of an existing member by their user ID",
 	path: "/{user_id}",
 	method: "patch",
 	tags,
@@ -13,21 +15,21 @@ export const updateByUserID = createRoute({
 		params: model.ParamsUserIDSchema,
 		body: jsonContentRequired(
 			model.updateMemberByUserIDRequest,
-			"The member properties to update.",
+			"Fields to update for the member",
 		),
 	},
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
 			model.updateMemberByUserIDResponse,
-			"The updated member properties.",
+			"Successfully updated member",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
 			model.updateMemberByUserIDErrorResponse,
-			"Error message when the member is not found.",
+			"Member not found",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
 			model.updateMemberByUserIDErrorResponse,
-			"Error message when something wrong occurred in the server.",
+			"Internal server error while updating member",
 		),
 	},
 });

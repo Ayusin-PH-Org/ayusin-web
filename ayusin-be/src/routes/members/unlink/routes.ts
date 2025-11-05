@@ -3,7 +3,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["member"];
+const tags = ["Members"];
 
 export const unlinkMembersRoute = createRoute({
 	description: "Unlink two LGU members",

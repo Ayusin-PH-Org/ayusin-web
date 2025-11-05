@@ -19,17 +19,14 @@ export const deleteCheckHandler: AppRouteHandler<DeleteCheckRoute> = async (
 			);
 		}
 
-		const initialLen = project.observationChecklist.checks.length;
-		project.observationChecklist.checks =
-			project.observationChecklist.checks.filter(
-				(chk) => chk.checkID.toString() !== checkId,
-			);
-		if (project.observationChecklist.checks.length === initialLen) {
+		const subDoc = project.observationChecklist.checks.id(checkId);
+		if (!subDoc) {
 			return c.json(
 				{ status: "error", description: "Checklist item not found" },
 				HttpStatusCodes.UNPROCESSABLE_ENTITY,
 			);
 		}
+		project.observationChecklist.checks.pull(subDoc);
 
 		await project.save();
 

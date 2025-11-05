@@ -3,10 +3,11 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["department", "member"];
+const tags = ["Departments", "Members"];
 
 export const getAllMembersRoute = createRoute({
-	description: "Get all LGU members for a department",
+	summary: "List department members",
+	description: "Retrieve all LGU members associated with a specific department",
 	path: "/{department_id}/members",
 	method: "get",
 	tags,

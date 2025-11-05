@@ -4,9 +4,11 @@ import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["department"];
+const tags = ["Departments"];
 
 export const deleteByID = createRoute({
+	summary: "Delete department",
+	description: "Remove an existing department record by its ID",
 	path: "/{id}",
 	method: "delete",
 	tags,

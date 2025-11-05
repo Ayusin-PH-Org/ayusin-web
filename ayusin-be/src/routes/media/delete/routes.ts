@@ -8,7 +8,9 @@ import {
 } from "../schema";
 
 export const deleteMediaRoute = createRoute({
-	description: "Delete media blob from Azure storage by URL",
+	summary: "Delete media",
+	description:
+		"Remove an existing media resource from Azure Blob Storage by its URL",
 	path: "/",
 	method: "delete",
 	tags: ["Media"],

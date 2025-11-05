@@ -16,8 +16,14 @@ export const ParamsIDSchema = z.object({
 });
 
 const Location = z.object({
-	x: z.number(),
-	y: z.number(),
+	x: z
+		.number()
+		.describe("Longitude of the location")
+		.openapi({ example: 32.9 }),
+	y: z
+		.number()
+		.describe("Latitude of the location")
+		.openapi({ example: 21.42 }),
 });
 
 export const DepartmentSchema = z.object({
@@ -34,15 +40,53 @@ export const DepartmentSchema = z.object({
 	roles: z.array(z.string()),
 });
 
-export const updateDepartmentByIDRequest = DepartmentSchema.pick({
-	shortname: true,
-	contact: true,
-	email: true,
-	headquarter_address: true,
-}).extend({
-	name: z.string().optional(),
-	headquarter_location: Location.optional(),
-});
+/** Example payload for updating a department */
+export const updateDepartmentByIDRequest = z
+	.object({
+		name: z
+			.string()
+			.optional()
+			.describe("Full department name")
+			.openapi({ example: "Department of Public Works and Highways" }),
+		shortname: z
+			.string()
+			.optional()
+			.describe("Abbreviated department name")
+			.openapi({ example: "DPWH" }),
+		contact: z
+			.string()
+			.optional()
+			.describe("Department contact number")
+			.openapi({ example: "(+63) 910-832-1832" }),
+		email: z
+			.string()
+			.optional()
+			.describe("Department contact email")
+			.openapi({ example: "support@dpwh.gov.ph" }),
+		headquarter_address: z
+			.string()
+			.optional()
+			.describe("Headquarter address")
+			.openapi({
+				example:
+					"Department of Public Works and Highways - Head Office, Manila",
+			}),
+		headquarter_location: Location.optional()
+			.describe("Headquarter geographic location")
+			.openapi({ example: { x: 32.9, y: 21.42 } }),
+	})
+	.describe("Payload to update a department by ID")
+	.openapi({
+		example: {
+			name: "Department of Public Works and Highways",
+			shortname: "DPWH",
+			contact: "(+63) 910-832-1832",
+			email: "support@dpwh.gov.ph",
+			headquarter_address:
+				"Department of Public Works and Highways - Head Office, Manila",
+			headquarter_location: { x: 32.9, y: 21.42 },
+		},
+	});
 
 export const updateDepartmentByIDResponse = z.object({
 	status: z.literal("success"),

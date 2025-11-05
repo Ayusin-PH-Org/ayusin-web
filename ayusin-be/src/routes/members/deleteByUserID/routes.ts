@@ -3,9 +3,11 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import * as model from "./model";
 
-const tags = ["member"];
+const tags = ["Members"];
 
 export const deleteByUserID = createRoute({
+	summary: "Delete member",
+	description: "Remove a member record by their user ID",
 	path: "/{user_id}",
 	method: "delete",
 	tags,
@@ -13,15 +15,15 @@ export const deleteByUserID = createRoute({
 	responses: {
 		[HttpStatusCodes.OK]: jsonContent(
 			model.deleteMemberByUserIDResponse,
-			"Member successfully deleted.",
+			"Successfully deleted member",
 		),
 		[HttpStatusCodes.NOT_FOUND]: jsonContent(
 			model.deleteMemberByUserIDErrorResponse,
-			"Error message when the member is not found.",
+			"Member not found",
 		),
 		[HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
 			model.deleteMemberByUserIDErrorResponse,
-			"Error message when something wrong occurred in the server.",
+			"Internal server error while deleting member",
 		),
 	},
 });

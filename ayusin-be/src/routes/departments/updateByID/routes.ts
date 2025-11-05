@@ -4,9 +4,11 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import * as model from "./model";
 import { ParamsIDSchema } from "./model";
 
-const tags = ["department"];
+const tags = ["Departments"];
 
 export const updateByID = createRoute({
+	summary: "Update department",
+	description: "Modify one or more fields of an existing department by its ID",
 	path: "/{id}",
 	method: "patch",
 	tags,
