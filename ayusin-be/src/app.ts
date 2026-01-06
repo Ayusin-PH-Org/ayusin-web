@@ -9,6 +9,7 @@ import members from "./routes/members/index";
 import projects from "./routes/projects/index";
 import reports from "./routes/reports/index";
 import roles from "./routes/roles/index";
+import webauthn from "./routes/webauthn/index";
 
 const app = createApp();
 configureOpenAPI(app);
@@ -25,6 +26,7 @@ app.onError((err, c) => {
 });
 
 const routes = [
+	webauthn,
 	index,
 	reports,
 	comments,

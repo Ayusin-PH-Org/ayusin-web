@@ -2,7 +2,7 @@ import * as mongoose from "mongoose";
 
 export const userSchema = new mongoose.Schema(
 	{
-		version: { type: Number, required: true },
+		version: { type: Number, required: true, default: 1 },
 		// distinguishes local-government members vs. citizen users
 		type: { type: String, enum: ["lgu_member", "citizen"], required: true },
 		role: {
@@ -31,6 +31,7 @@ export const userSchema = new mongoose.Schema(
 		credentialID: { type: String, required: false },
 		publicKey: { type: String, required: false },
 		counter: { type: Number, required: false },
+		transports: { type: [String], default: [], required: false },
 	},
 	{ timestamps: true },
 );
